@@ -7,7 +7,7 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
 /*
- * @version $Revision: 187 $
+ * @version $Revision: 211 $
  */
 public class Intersections {
 
@@ -629,9 +629,10 @@ public class Intersections {
 		_intersection.point.z = _origin.z + _direction.z * t;
 		_intersection.normal.set(m_normal);
 		_intersection.normal.normalize();
+		_intersection.distance = _origin.distance(_intersection.point);
 		
 		// Intersection point after the end of the segment?
-		if ((_fLength != 0) && (_origin.distance(_intersection.point) > _fLength))
+		if ((_fLength != 0) && (_intersection.distance > _fLength))
 			return false;
 
 		// bounds check
@@ -753,6 +754,9 @@ public class Intersections {
 
 /*
  * $Log$
+ * Revision 1.8  2004/03/02 06:46:02  puf
+ * Now sets the distance field in the intersection object in intersectPolygonChecked..
+ *
  * Revision 1.7  2003/12/05 15:24:25  tako
  * Removed all old-style intersection methods.
  * All methods now use an Intersection object and all methods have a
