@@ -7,6 +7,7 @@ import javax.vecmath.*;
 
 /**
  * @author tako
+ * @version $Revision: 48 $
  */
 public class GLUtils {
 	
@@ -38,3 +39,10 @@ public class GLUtils {
 		return mat;
 	}
 }
+
+/*
+ * $Log$
+ * Revision 1.2  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

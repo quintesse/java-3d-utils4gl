@@ -11,6 +11,7 @@ import java.nio.ByteBuffer;
  * Image loading class that converts BufferedImages into a data
  * structure that can be easily passed to OpenGL.
  * @author Pepijn Van Eeckhoudt
+ * @version $Revision: 48 $
  */
 public class TextureReader {
     public static Texture readTexture(String filename) throws IOException {
@@ -63,3 +64,10 @@ public class TextureReader {
         return new Texture(unpackedPixels, img.getWidth(), img.getHeight());
     }
 }
+
+/*
+ * $Log$
+ * Revision 1.2  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

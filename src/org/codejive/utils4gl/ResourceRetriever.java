@@ -9,6 +9,7 @@ import java.net.URL;
  * Utility class that allows transparent reading of files from
  * the current working directory or from the classpath.
  * @author Pepijn Van Eeckhoudt
+ * @version $Revision: 48 $
  */
 public class ResourceRetriever {
     public static URL getResource(final String filename) throws IOException {
@@ -33,3 +34,10 @@ public class ResourceRetriever {
         }
     }
 }
+
+/*
+ * $Log$
+ * Revision 1.2  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

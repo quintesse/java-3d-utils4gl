@@ -11,6 +11,7 @@ import net.java.games.jogl.util.GLUT;
 
 /**
  * @author Tako
+ * @version $Revision: 48 $
  */
 public class RenderContext {
 	private GL m_gl;
@@ -66,3 +67,10 @@ public class RenderContext {
 		}
 	}
 }
+
+/*
+ * $Log$
+ * Revision 1.3  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

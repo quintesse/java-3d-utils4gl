@@ -2,6 +2,9 @@ package org.codejive.utils4gl;
 
 import java.nio.ByteBuffer;
 
+/*
+ * @version $Revision: 48 $
+ */
 public class Texture {
     private ByteBuffer m_pixels;
     private int m_nWidth;
@@ -25,3 +28,10 @@ public class Texture {
 		return m_nHeight;
 	}
 }
+
+/*
+ * $Log$
+ * Revision 1.2  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

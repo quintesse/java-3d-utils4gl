@@ -7,6 +7,7 @@ import java.util.Iterator;
 
 /**
  * @author tako
+ * @version $Revision: 48 $
  */
 public abstract class ConditionalIterator implements Iterator {
 	private Iterator m_iter;
@@ -54,3 +55,10 @@ public abstract class ConditionalIterator implements Iterator {
 
 	protected abstract boolean includeElement(Object _element);
 }
+
+/*
+ * $Log$
+ * Revision 1.2  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

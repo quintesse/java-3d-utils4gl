@@ -6,6 +6,9 @@ package org.codejive.utils4gl;
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
+/*
+ * @version $Revision: 48 $
+ */
 public class Intersections {
 
 	/** A point that we use for working calculations (coord transforms) */
@@ -617,3 +620,10 @@ public class Intersections {
 		return ((crossings % 2) == 1);
 	}
 }
+
+/*
+ * $Log$
+ * Revision 1.3  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

@@ -7,6 +7,7 @@ import java.awt.Color;
 
 /**
  * @author Tako
+ * @version $Revision: 48 $
  */
 public class GLColor {
 	private float m_fRed, m_fGreen, m_fBlue;
@@ -120,3 +121,10 @@ public class GLColor {
 		return "(R:" + m_fRed + ",G:" + m_fGreen + ",B:" + m_fBlue + ",alpha:" + m_fAlpha + ")";
 	}
 }
+
+/*
+ * $Log$
+ * Revision 1.3  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

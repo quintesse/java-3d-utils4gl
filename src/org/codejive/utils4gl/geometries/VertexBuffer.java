@@ -6,6 +6,7 @@ package org.codejive.utils4gl;
  * it one vertex at a time.
  *  
  * @author Tako
+ * @version $Revision: 48 $
  */
 public class VertexBuffer {
 	private float[] m_vfCoordinates;
@@ -68,3 +69,10 @@ public class VertexBuffer {
 		m_nVertexCount = 0;
 	}
 }
+
+/*
+ * $Log$
+ * Revision 1.2  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

@@ -5,6 +5,7 @@ package org.codejive.utils4gl;
 
 /**
  * @author tako
+ * @version $Revision: 48 $
  */
 public class SimpleFrameRateCounter implements FrameRateCounter {
 	private long m_lFrameCount;
@@ -40,3 +41,10 @@ public class SimpleFrameRateCounter implements FrameRateCounter {
 		return m_fFrameRate;
 	}
 }
+
+/*
+ * $Log$
+ * Revision 1.3  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

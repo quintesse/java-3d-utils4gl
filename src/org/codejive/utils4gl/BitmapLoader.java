@@ -11,6 +11,7 @@ import java.io.InputStream;
  * 
  * @author Abdul Bezrati
  * @author Pepijn Van Eeckhoudt
+ * @version $Revision: 48 $
  */
 public class BitmapLoader {
 	public static BufferedImage loadBitmap(String file) {
@@ -153,3 +154,10 @@ public class BitmapLoader {
 		}
 	}
 }
+
+/*
+ * $Log$
+ * Revision 1.3  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */

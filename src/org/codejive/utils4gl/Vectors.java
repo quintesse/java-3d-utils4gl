@@ -7,6 +7,7 @@ import javax.vecmath.*;
 
 /**
  * @author Tako
+ * @version $Revision: 48 $
  */
 public class Vectors {
 
@@ -113,3 +114,10 @@ public class Vectors {
 		mat.m33 = 1.0;
 	}
 }
+
+/*
+ * $Log$
+ * Revision 1.3  2003/11/17 10:49:59  tako
+ * Added CVS macros for revision and log.
+ *
+ */
