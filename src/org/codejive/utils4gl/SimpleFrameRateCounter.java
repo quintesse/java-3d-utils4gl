@@ -1,7 +1,7 @@
 /*
  * Created on Aug 31, 2003
  */
-package org.codejive.world3d;
+package org.codejive.utils4gl;
 
 /**
  * @author tako
