@@ -21,6 +21,9 @@
  */
 package org.codejive.utils4gl;
 
+import java.awt.Rectangle;
+import java.util.Stack;
+
 import org.codejive.utils4gl.textures.*;
 
 import net.java.games.jogl.GL;
@@ -32,13 +35,14 @@ import net.java.games.jogl.util.GLUT;
  * to pass all of them around all of the time.
  * The object is also used to set and retrieve any managed textures.
  * @author Tako
- * @version $Revision: 213 $
+ * @version $Revision: 235 $
  */
 public class RenderContext {
 	private GL m_gl;
 	private GLU m_glu;
 
 	private Texture m_textures[];
+	private Stack m_clippingRegions;
 		
 	private static final GLUT m_glut = new GLUT();
 	
@@ -52,6 +56,8 @@ public class RenderContext {
 
 		// Just an arbitrary number for now until I decide how to handle this
 		m_textures = new Texture[10];
+		
+		m_clippingRegions = new Stack();
 	}
 	
 	/** Returns the reference to the GL object
@@ -92,10 +98,67 @@ public class RenderContext {
 	public Texture getTexture(int _nTextureId) {
 		return m_textures[_nTextureId];
 	}
+	
+	/**
+	 * Sets the current clipping region using glScissor() while
+	 * maintaining a stact of those regions so that calling
+	 * popClippingRegion() restores the previous setting.
+	 * @param _clipRect The new region to clip against
+	 */
+	public void pushClippingRegion(Rectangle _clipRect) {
+		Rectangle newRect = new Rectangle(_clipRect);
+		m_clippingRegions.push(newRect);
+		setClippingRegion(newRect);
+	}
+	
+	/**
+	 * Pops the current clipping region from the stack and restores
+	 * the previous region. Clipping will be turned of completely
+	 * if no more regions remain in the stack.
+	 * @return The region that was current and has been popped or
+	 * null if no clipping region was currently active.
+	 */
+	public Rectangle popClippingRegion() {
+		Rectangle rect = null;
+		if (!m_clippingRegions.isEmpty()) {
+			rect = (Rectangle)m_clippingRegions.pop();
+			Rectangle newRect = null;
+			if (!m_clippingRegions.isEmpty()) {
+				newRect = (Rectangle)m_clippingRegions.peek();
+			}
+			setClippingRegion(newRect);
+		}
+		return rect;
+	}
+	
+	/**
+	 * Returns the currently active clipping region or null if no
+	 * region was active.
+	 * @return The current clipping region or null if none was active
+	 */
+	public Rectangle getClippingRegion() {
+		Rectangle rect = null;
+		if (!m_clippingRegions.isEmpty()) {
+			rect = (Rectangle) m_clippingRegions.peek();
+		}
+		return rect;
+	}
+
+	private void setClippingRegion(Rectangle _clipRect) {
+		if (_clipRect != null) {
+			m_gl.glScissor(_clipRect.x, _clipRect.y, _clipRect.width, _clipRect.height);
+			m_gl.glEnable(GL.GL_SCISSOR_TEST);
+		} else {
+			m_gl.glDisable(GL.GL_SCISSOR_TEST);
+		}
+	}
 }
 
 /*
  * $Log$
+ * Revision 1.8  2004/05/04 21:52:42  tako
+ * Added support for clipping and maintaining a stack of active clipping regions.
+ *
  * Revision 1.7  2004/03/07 16:05:55  tako
  * Fixed faulty CVS checkin comments and added javadoc.
  *
