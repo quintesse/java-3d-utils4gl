@@ -5,32 +5,67 @@ package org.codejive.utils4gl;
 
 import javax.vecmath.*;
 
-/**
+/** Helper class for Vectors. Has lots of useful constants and a
+ * couple of static methods that make working with Vectors a bit
+ * easier.
  * @author Tako
- * @version $Revision: 48 $
+ * @version $Revision: 101 $
  */
 public class Vectors {
 
+	/** Point (0, 0, 0) using floats
+	 */	
 	static final public Point3f POSF_CENTER = new Point3f(0.0f, 0.0f, 0.0f);
 
+	/** Point (0, 0, 0) using doubles
+	 */	
 	static final public Point3d POSD_CENTER = new Point3d(0.0d, 0.0d, 0.0d);
 
+	/** Vector (0, 0, 0) using floats
+	 */	
 	static final public Vector3f VECTF_ZERO = new Vector3f(0.0f, 0.0f, 0.0f);
+	/** Vector (0, 0, 0) using floats
+	 */	
 	static final public Vector3f VECTF_CENTER = VECTF_ZERO;
+	/** Vector (1, 0, 0) using floats
+	 */	
 	static final public Vector3f VECTF_LEFT = new Vector3f(1.0f, 0.0f, 0.0f);
+	/** Vector (0, 1, 0) using floats
+	 */	
 	static final public Vector3f VECTF_UP = new Vector3f(0.0f, 1.0f, 0.0f);
+	/** Vector (0, 0, 1) using floats
+	 */	
 	static final public Vector3f VECTF_OUT = new Vector3f(0.0f, 0.0f, 1.0f);
 
+	/** Vector (0, 0, 0) using doubles
+	 */	
 	static final public Vector3d VECTD_ZERO = new Vector3d(0.0d, 0.0d, 0.0d);
+	/** Vector (0, 0, 0) using doubles
+	 */	
 	static final public Vector3d VECTD_CENTER = VECTD_ZERO;
+	/** Vector (1, 0, 0) using doubles
+	 */	
 	static final public Vector3d VECTD_LEFT = new Vector3d(1.0d, 0.0d, 0.0d);
+	/** Vector (0, 1, 0) using doubles
+	 */	
 	static final public Vector3d VECTD_UP = new Vector3d(0.0d, 1.0d, 0.0d);
+	/** Vector (0, 0, 1) using doubles
+	 */	
 	static final public Vector3d VECTD_OUT = new Vector3d(0.0d, 0.0d, 1.0d);
 
+	/** A standard identity matrix using floats.
+	 */	
 	static final public Matrix3f MATRF_IDENTITY = new Matrix3f(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 	
+	/** A standard identity matrix using doubles.
+	 */	
 	static final public Matrix3d MATRD_IDENTITY = new Matrix3d(1.0d, 0.0d, 0.0d, 0.0d, 1.0d, 0.0d, 0.0d, 0.0d, 1.0d);
 
+	/** Multilies the given vector by the given scalar.
+	 * @param _v The Vector to scale
+	 * @param _fScale The factor by which to multiply the vector
+	 * @return A new Vector contaiing the scaled result
+	 */	
 	public static Vector3f getScaledVector(Vector3f _v, float _fScale) {
 		Vector3f scaledv = (Vector3f)_v.clone();
 		scaledv.normalize();
@@ -38,6 +73,8 @@ public class Vectors {
 		return scaledv;	
 	}
 	
+	/**
+	 */	
 	public static void lookAt(Matrix4d mat, Point3d eye, Point3d target) {
 		// Determine lookVector
 		double lookVectorX = eye.x - target.x;
@@ -117,6 +154,9 @@ public class Vectors {
 
 /*
  * $Log$
+ * Revision 1.4  2003/11/20 16:23:27  tako
+ * Updated Java docs.
+ *
  * Revision 1.3  2003/11/17 10:49:59  tako
  * Added CVS macros for revision and log.
  *

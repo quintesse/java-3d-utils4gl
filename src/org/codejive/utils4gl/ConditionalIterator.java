@@ -5,14 +5,21 @@ package org.codejive.utils4gl;
 
 import java.util.Iterator;
 
-/**
+/** An abstract iterator which can be used to create iterators that
+ * function as a filtering wrapper for another iterator. The
+ * filtering iterator will only return the allowed objects from
+ * the filtered iterator. Only the method includeElement(Object)
+ * needs to be implemented to make this possible.
  * @author tako
- * @version $Revision: 48 $
+ * @version $Revision: 101 $
  */
 public abstract class ConditionalIterator implements Iterator {
 	private Iterator m_iter;
 	private Object m_currItem;
 	
+	/** Constructor that takes the iterator that is going to be filtered
+	 * @param _iter The iterator to be filtered
+	 */	
 	public ConditionalIterator(Iterator _iter) {
 		m_iter = _iter;
 		m_currItem = null;
@@ -53,11 +60,20 @@ public abstract class ConditionalIterator implements Iterator {
 		}
 	}
 
+	/** Determines if the given object should be included in the output
+	 * of this iterator or not.
+	 * @param _element The object to include or not
+	 * @return Boolean indicating if the given object should be
+	 * included or not
+	 */	
 	protected abstract boolean includeElement(Object _element);
 }
 
 /*
  * $Log$
+ * Revision 1.3  2003/11/20 16:23:27  tako
+ * Updated Java docs.
+ *
  * Revision 1.2  2003/11/17 10:49:59  tako
  * Added CVS macros for revision and log.
  *

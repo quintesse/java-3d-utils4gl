@@ -11,13 +11,27 @@ import java.nio.ByteBuffer;
  * Image loading class that converts BufferedImages into a data
  * structure that can be easily passed to OpenGL.
  * @author Pepijn Van Eeckhoudt
- * @version $Revision: 48 $
+ * @version $Revision: 101 $
  */
 public class TextureReader {
+	/** Returns a Texture object initialized with the image data
+	 * (but without the alpha channel) as stored in the given file.
+	 * @param filename File name of the requested image
+	 * @throws IOException If the requested image can't be located or read
+	 * @return A Texture object witout alpha information
+	 */	
     public static Texture readTexture(String filename) throws IOException {
         return readTexture(filename, false);
     }
 
+	 /** Returns a Texture object initialized with the image data
+	  * and optionally the alpha channel as stored in the given file.
+	  * @param filename File name of the requested image
+	  * @param storeAlphaChannel A boolean indicating if alpha channel information should
+	  * be read and stored in the Texture object as well
+	  * @throws IOException If the requested image can't be located or read
+	  * @return A Texture object witout alpha information
+	  */	 
     public static Texture readTexture(String filename, boolean storeAlphaChannel) throws IOException {
         BufferedImage bufferedImage;
         if (filename.endsWith(".bmp")) {
@@ -67,6 +81,9 @@ public class TextureReader {
 
 /*
  * $Log$
+ * Revision 1.3  2003/11/20 16:23:27  tako
+ * Updated Java docs.
+ *
  * Revision 1.2  2003/11/17 10:49:59  tako
  * Added CVS macros for revision and log.
  *

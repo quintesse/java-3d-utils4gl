@@ -7,7 +7,7 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
 /*
- * @version $Revision: 48 $
+ * @version $Revision: 101 $
  */
 public class Intersections {
 
@@ -57,12 +57,13 @@ public class Intersections {
 		m_working2dCoords = new float[8];
 	}
 
-	/**
-	 * Test an array of triangles for intersection. Returns the closest
+	/** Test an array of triangles for intersection. Returns the closest
 	 * intersection point to the origin of the picking ray. Assumes that the
 	 * coordinates are ordered as [Xn, Yn, Zn] and are translated into the same
 	 * coordinate system that the the origin and direction are from.
 	 *
+	 * @return true if there was an intersection, false if not
+	 * @param normal The normal of the intersected triangle
 	 * @param origin The origin of the ray
 	 * @param direction The direction of the ray
 	 * @param length An optional length for to make the ray a segment. If
@@ -72,7 +73,6 @@ public class Intersections {
 	 * @param point The intersection point for returning
 	 * @param intersectOnly true if we only want to know if we have a
 	 *    intersection and don't really care which it is
-	 * @return true if there was an intersection, false if not
 	 */
 	public boolean intersectTriangleArray(Point3d origin, Vector3d direction, float length, float[] coords, int numTris, Point3d point, Vector3d normal, boolean intersectOnly) {
 		if (coords.length < numTris * 9)
@@ -106,12 +106,13 @@ public class Intersections {
 		return (shortest_length != -1);
 	}
 
-	/**
-	 * Test an array of quads for intersection. Returns the closest
+	/** Test an array of quads for intersection. Returns the closest
 	 * intersection point to the origin of the picking ray. Assumes that the
 	 * coordinates are ordered as [Xn, Yn, Zn] and are translated into the same
 	 * coordinate system that the the origin and direction are from.
 	 *
+	 * @return true if there was an intersection, false if not
+	 * @param normal The normal of the intersected quad
 	 * @param origin The origin of the ray
 	 * @param direction The direction of the ray
 	 * @param length An optional length for to make the ray a segment. If
@@ -121,7 +122,6 @@ public class Intersections {
 	 * @param point The intersection point for returning
 	 * @param intersectOnly true if we only want to know if we have a
 	 *    intersection and don't really care which it is
-	 * @return true if there was an intersection, false if not
 	 */
 	public boolean rayQuadArray(Point3d origin, Vector3d direction, float length, float[] coords, int numQuads, Point3d point, Vector3d normal, boolean intersectOnly) {
 		if (coords.length < numQuads * 12)
@@ -152,12 +152,13 @@ public class Intersections {
 		return (shortest_length != -1);
 	}
 
-	/**
-	 * Test an array of triangles strips for intersection. Returns the closest
+	/** Test an array of triangles strips for intersection. Returns the closest
 	 * intersection point to the origin of the picking ray. Assumes that the
 	 * coordinates are ordered as [Xn, Yn, Zn] and are translated into the same
 	 * coordinate system that the the origin and direction are from.
 	 *
+	 * @return true if there was an intersection, false if not
+	 * @param normal The normal of the intersected triangle
 	 * @param origin The origin of the ray
 	 * @param direction The direction of the ray
 	 * @param length An optional length for to make the ray a segment. If
@@ -168,7 +169,6 @@ public class Intersections {
 	 * @param point The intersection point for returning
 	 * @param intersectOnly true if we only want to know if we have a
 	 *    intersection and don't really care which it is
-	 * @return true if there was an intersection, false if not
 	 */
 	public boolean intersectTriangleStripArray(Point3d origin, Vector3d direction, float length, float[] coords, int[] stripCounts, int numStrips, Point3d point, Vector3d normal, boolean intersectOnly) {
 		// Add all the strip lengths up first
@@ -210,12 +210,13 @@ public class Intersections {
 		return (shortest_length != -1);
 	}
 
-	/**
-	 * Test an array of triangle fans for intersection. Returns the closest
+	/** Test an array of triangle fans for intersection. Returns the closest
 	 * intersection point to the origin of the picking ray. Assumes that the
 	 * coordinates are ordered as [Xn, Yn, Zn] and are translated into the same
 	 * coordinate system that the the origin and direction are from.
 	 *
+	 * @return true if there was an intersection, false if not
+	 * @param normal The normal of the intersected triangle
 	 * @param origin The origin of the ray
 	 * @param direction The direction of the ray
 	 * @param length An optional length for to make the ray a segment. If
@@ -226,7 +227,6 @@ public class Intersections {
 	 * @param point The intersection point for returning
 	 * @param intersectOnly true if we only want to know if we have a
 	 *    intersection and don't really care which it is
-	 * @return true if there was an intersection, false if not
 	 */
 	public boolean intersectTriangleFanArray(Point3d origin, Vector3d direction, float length, float[] coords, int[] stripCounts, int numStrips, Point3d point, Vector3d normal, boolean intersectOnly) {
 		// Add all the strip lengths up first
@@ -280,13 +280,14 @@ public class Intersections {
 		return (shortest_length != -1);
 	}
 
-	/**
-	 * Test an array of indexed triangles for intersection. Returns the
+	/** Test an array of indexed triangles for intersection. Returns the
 	 * closest intersection point to the origin of the picking ray. Assumes
 	 * that the coordinates are ordered as [Xn, Yn, Zn] and are translated
 	 * into the same coordinate system that the the origin and direction are
 	 * from.
 	 *
+	 * @return true if there was an intersection, false if not
+	 * @param normal The normal of the intersected triangle
 	 * @param origin The origin of the ray
 	 * @param direction The direction of the ray
 	 * @param length An optional length for to make the ray a segment. If
@@ -297,7 +298,6 @@ public class Intersections {
 	 * @param point The intersection point for returning
 	 * @param intersectOnly true if we only want to know if we have a
 	 *    intersection and don't really care which it is
-	 * @return true if there was an intersection, false if not
 	 */
 	public boolean intersectIndexedTriangleArray(Point3d origin, Vector3d direction, float length, float[] coords, int[] indexes, int numIndex, Point3d point, Vector3d normal, boolean intersectOnly) {
 		double shortest_length = -1;
@@ -340,13 +340,14 @@ public class Intersections {
 		return (shortest_length != -1);
 	}
 
-	/**
-	 * Test an array of indexed quads for intersection. Returns the
+	/** Test an array of indexed quads for intersection. Returns the
 	 * closest intersection point to the origin of the picking ray. Assumes
 	 * that the coordinates are ordered as [Xn, Yn, Zn] and are translated
 	 * into the same coordinate system that the the origin and direction are
 	 * from.
 	 *
+	 * @return true if there was an intersection, false if not
+	 * @param normal The normal of the intersected quad
 	 * @param origin The origin of the ray
 	 * @param direction The direction of the ray
 	 * @param length An optional length for to make the ray a segment. If
@@ -357,7 +358,6 @@ public class Intersections {
 	 * @param point The intersection point for returning
 	 * @param intersectOnly true if we only want to know if we have a
 	 *    intersection and don't really care which it is
-	 * @return true if there was an intersection, false if not
 	 */
 	public boolean intersectIndexedQuadArray(Point3d origin, Vector3d direction, float length, float[] coords, int[] indexes, int numIndex, Point3d point, Vector3d normal, boolean intersectOnly) {
 		double shortest_length = -1;
@@ -409,13 +409,14 @@ public class Intersections {
 	// Lower level methods for individual polygons
 	//----------------------------------------------------------
 
-	/**
-	 * Test to see if the polygon intersects with the given ray. The
+	/** Test to see if the polygon intersects with the given ray. The
 	 * coordinates are ordered as [Xn, Yn, Zn]. The algorithm assumes that
 	 * the points are co-planar. If they are not, the results may not be
 	 * accurate. The normal is calculated based on the first 3 points of the
 	 * polygon. We don't do any testing for less than 3 points.
 	 *
+	 * @return true if there was an intersection, false if not
+	 * @param normal The normal of the intersected polygon
 	 * @param origin The origin of the ray
 	 * @param direction The direction of the ray
 	 * @param length An optional length for to make the ray a segment. If
@@ -423,7 +424,6 @@ public class Intersections {
 	 * @param coords The coordinates of the polygon
 	 * @param numCoords The number of coordinates to use from the array
 	 * @param point The intersection point for returning
-	 * @return true if there was an intersection, false if not
 	 */
 	public boolean intersectPolygon(Point3d origin, Vector3d direction, float length, float[] coords, int numCoords, Point3d point, Vector3d normal) {
 		if (coords.length < numCoords * 2)
@@ -435,14 +435,15 @@ public class Intersections {
 		return intersectPolygonChecked(origin, direction, length, coords, numCoords, point, normal);
 	}
 
-	/**
-	 * Private version of the ray - Polygon intersection test that does not
+	/** Private version of the ray - Polygon intersection test that does not
 	 * do any bounds checking on arrays and assumes everything is correct.
 	 * Allows fast calls to this method for internal use as well as more
 	 * expensive calls with checks for the public interfaces.
 	 * <p>
 	 * This method does not use m_workPoint.
 	 *
+	 * @return true if there was an intersection, false if not
+	 * @param normal The normal of the intersected polygon
 	 * @param origin The origin of the ray
 	 * @param direction The direction of the ray
 	 * @param length An optional length for to make the ray a segment. If
@@ -450,7 +451,6 @@ public class Intersections {
 	 * @param coords The coordinates of the polygon
 	 * @param numCoords The number of coordinates to use from the array
 	 * @param point The intersection point for returning
-	 * @return true if there was an intersection, false if not
 	 */
 	private boolean intersectPolygonChecked(Point3d origin, Vector3d direction, float length, float[] coords, int numCoords, Point3d point, Vector3d normal) {
 		int i, j;
@@ -623,6 +623,9 @@ public class Intersections {
 
 /*
  * $Log$
+ * Revision 1.4  2003/11/20 16:23:27  tako
+ * Updated Java docs.
+ *
  * Revision 1.3  2003/11/17 10:49:59  tako
  * Added CVS macros for revision and log.
  *

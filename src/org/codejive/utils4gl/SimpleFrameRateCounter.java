@@ -3,9 +3,11 @@
  */
 package org.codejive.utils4gl;
 
-/**
+/** Implementation of a FrameRateCounter that does a simple average
+ * on the number of frames that where counted during the last half
+ * of a second.
  * @author tako
- * @version $Revision: 48 $
+ * @version $Revision: 101 $
  */
 public class SimpleFrameRateCounter implements FrameRateCounter {
 	private long m_lFrameCount;
@@ -14,6 +16,8 @@ public class SimpleFrameRateCounter implements FrameRateCounter {
 	private long m_lLastUpdateTime;
 	private long m_lLastFrameCount;
 	
+	/** Constructor for a new SimpleFrameRateCounter.
+	 */	
 	public SimpleFrameRateCounter() {
 		m_lFrameCount = 0;
 		m_lLastUpdateTime = System.currentTimeMillis();
@@ -44,6 +48,9 @@ public class SimpleFrameRateCounter implements FrameRateCounter {
 
 /*
  * $Log$
+ * Revision 1.4  2003/11/20 16:23:27  tako
+ * Updated Java docs.
+ *
  * Revision 1.3  2003/11/17 10:49:59  tako
  * Added CVS macros for revision and log.
  *

@@ -6,14 +6,17 @@ import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.io.InputStream;
 
-/**
- * Windows bitmap file loader.
- * 
+/** Windows bitmap file loader.
+ *
  * @author Abdul Bezrati
  * @author Pepijn Van Eeckhoudt
- * @version $Revision: 48 $
+ * @version $Revision: 101 $
  */
 public class BitmapLoader {
+	/** Reads a bitmap image from a file on the disk or in a resource.
+	 * @param file The file name of the bitmap to load
+	 * @return A BufferedImage containing the loaded image
+	 */	
 	public static BufferedImage loadBitmap(String file) {
 		BufferedImage image;
 		try {
@@ -157,6 +160,9 @@ public class BitmapLoader {
 
 /*
  * $Log$
+ * Revision 1.4  2003/11/20 16:23:27  tako
+ * Updated Java docs.
+ *
  * Revision 1.3  2003/11/17 10:49:59  tako
  * Added CVS macros for revision and log.
  *
