@@ -3,8 +3,6 @@
  */
 package org.codejive.utils4gl;
 
-import org.codejive.utils4gl.*;
-
 /**
  * @author tako
  */
