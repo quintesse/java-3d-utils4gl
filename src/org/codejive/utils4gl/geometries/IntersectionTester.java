@@ -1,78 +1,53 @@
 /*
  * Created on 14-mrt-2003
  */
-package org.codejive.utils4gl;
+package org.codejive.utils4gl.geometries;
+
+import java.util.Iterator;
 
 import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
+import javax.vecmath.Vector3f;
 
-/*
- * @version $Revision: 211 $
+
+/**
+ * This class can be used to determine intersections on any geometry contained in a VertexBuffer.
+ * For performance reasons it's best to re-use an object of this class as much as possible,
+ * but it has to be taken into account that the code is _not_ thread-safe!
+ * 
+ * @author Tako
+ * @version $Revision: 216 $
  */
-public class Intersections {
-
+public class IntersectionTester {
+	
 	/** A point that we use for working calculations (vertex transforms) */
 	private Intersection m_workIntersect;
 	private Vector3d m_workVector;
 
 	/** Working vectors */
+	private Vector3f m_polyVector0;
+	private Vector3f m_polyVector1;
+	private Vector3f m_polyVector2;
 	private Vector3d m_tmpVector0;
 	private Vector3d m_tmpVector1;
 	private Vector3d m_normal;
-	private Vector3d m_diffVector;
 
 	/** The current 2D vertex list that we work from */
 	private float[] m_working2dVertices;
-
-	/** Temporay space for a single quad polygon */
-	private float[] m_tmpPolygon;
-
-	/** This class contains all information about an intersection. 
-	 * It is returned by some of the functions in this class.
-	 */
-	 public static class Intersection {
-		/** Indicates if an intersection was found. 
-		 * The other members are only valid, if this field has a value of true.
-		 */
-		public boolean isIntersecting;
-		/** The point at which an intersection was found
-		 */
-		public Point3d point = new Point3d();
-		/** The normal at the which the vector intersects at the point found.
-		 */
-		public Vector3d normal = new Vector3d();
-		/** The distance from the point passed in to the intersection point.
-		 */
-		public double distance = 0.0;
-  
-		public Intersection() {
-			// No initialization necessary
-		}
-
-		public Intersection(Intersection _source) {
-			set(_source);
-		}
-		
-		public void set(Intersection _source) {
-			isIntersecting = _source.isIntersecting;
-			point = _source.point;
-			normal = _source.normal;
-			distance = _source.distance;
-		}
-	}
 
 	/**
 	 * Create a default instance of this class with no internal data
 	 * structures allocated.
 	 */
-	public Intersections() {
+	public IntersectionTester() {
 		m_workIntersect = new Intersection();
 		m_workVector = new Vector3d();
+		m_polyVector0 = new Vector3f();
+		m_polyVector1 = new Vector3f();
+		m_polyVector2 = new Vector3f();
 		m_tmpVector0 = new Vector3d();
 		m_tmpVector1 = new Vector3d();
 		m_normal = new Vector3d();
-		m_diffVector = new Vector3d();
-		m_tmpPolygon = new float[12];
 
 		m_working2dVertices = new float[8];
 	}
@@ -89,485 +64,40 @@ public class Intersections {
 		m_working2dVertices = new float[8];
 	}
 
-	/** Test an array of triangles for intersection. Returns the closest
-	 * intersection point to the origin of the picking ray. Assumes that the
-	 * vertices are ordered as [Xn, Yn, Zn] and are translated into the same
-	 * coordinate system that the the origin and direction are from.
+	/** Performs a Ray - Geometry intersection test. Returns the closest
+	 * intersection point to the origin of the picking ray.
 	 *
 	 * @param _origin The origin of the ray
 	 * @param _direction The direction of the ray
 	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _nTriangleCount The number of triangles to use from the array
+	 * @param _geometry The geometry to perform intersection on
 	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
 	 * @param _intersection Will hold the details of any intersection found. The isIntersecting member will be false if no intersection was found.
 	 * @return true if there was an intersection, false if not
 	 */
-	public boolean intersectTriangleArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int _nTriangleCount, boolean _bAnyIntersect, Intersection _intersection) {
-		if (_vertices.length < _nTriangleCount * 9)
-			throw new IllegalArgumentException("Not enough vertices for the given number of triangles");
-
+	public boolean intersect(Point3d _origin, Vector3d _direction, float _fLength, Geometry _geometry, boolean _bAnyIntersect, Intersection _intersection) {
 		double shortest_length = -1;
-		double this_length;
 
-		// Make length squared because we do all comparisons using squared distances
-		_fLength *= _fLength;
-		
-		for (int i = 0; i < _nTriangleCount; i++) {
-			System.arraycopy(_vertices, i * 9, m_tmpPolygon, 0, 9);
-
-			if (intersectPolygonChecked(_origin, _direction, 0.0f, m_tmpPolygon, 3, m_workIntersect)) {
-				m_diffVector.sub(_origin, m_workIntersect.point);
-
-				this_length = m_diffVector.lengthSquared();
-
-				if (((_fLength == 0) || (this_length <= _fLength)) && ((shortest_length == -1) || (this_length < shortest_length))) {
-					shortest_length = this_length;
+		Iterator i = _geometry.polygonIterator(VertexBuffer.COORDINATES);
+		while (i.hasNext()) {
+			Polygon p = (Polygon)i.next();
+			if (intersectPolygonChecked(_origin, _direction, _fLength, p, m_workIntersect)) {
+				if ((shortest_length == -1) || (m_workIntersect.getDistance() < shortest_length)) {
+					shortest_length = m_workIntersect.getDistance();
 					_intersection.set(m_workIntersect);
-					if (_bAnyIntersect)
+					if (_bAnyIntersect) {
 						break;
-				}
-			}
-		}
-
-		_intersection.isIntersecting = (shortest_length != -1);
-
-		return _intersection.isIntersecting;
-	}
-
-	/** Test an array of triangles for intersection. Returns the closest
-	 * intersection point to the origin of the picking ray. Assumes that the
-	 * vertices are ordered as [Xn, Yn, Zn] and are translated into the same
-	 * coordinate system that the the origin and direction are from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _nTriangleCount The number of triangles to use from the array
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @return the details of any intersection found. The isIntersecting member will be false if no intersection was found. 
-	 */
-	public Intersection intersectTriangleArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int _nTriangleCount, boolean _bAnyIntersect) {
-		Intersection intersection = new Intersection();
-		intersectTriangleArray(_origin, _direction, _fLength, _vertices, _nTriangleCount, _bAnyIntersect, intersection);
-		return intersection;
-	}
-
-	/** Test an array of quads for intersection. Returns the closest
-	 * intersection point to the origin of the picking ray. Assumes that the
-	 * vertices are ordered as [Xn, Yn, Zn] and are translated into the same
-	 * coordinate system that the the origin and direction are from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the quads
-	 * @param _nQuadCount The number of quads to use from the array
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @param _intersection Will hold the details of any intersection found. The isIntersecting member will be false if no intersection was found.
-	 * @return true if there was an intersection, false if not
-	 */
-	public boolean rayQuadArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int _nQuadCount, boolean _bAnyIntersect, Intersection _intersection) {
-		if (_vertices.length < _nQuadCount * 12)
-			throw new IllegalArgumentException("Not enough vertices for the given number of quads");
-
-		double shortest_length = -1;
-		double this_length;
-
-		for (int i = 0; i < _nQuadCount; i++) {
-			System.arraycopy(_vertices, i * 12, m_tmpPolygon, 0, 12);
-
-			if (intersectPolygonChecked(_origin, _direction, _fLength, m_tmpPolygon, 4, m_workIntersect)) {
-				m_diffVector.sub(_origin, m_workIntersect.point);
-
-				this_length = m_diffVector.lengthSquared();
-
-				if ((shortest_length == -1) || (this_length < shortest_length)) {
-					shortest_length = this_length;
-					_intersection.set(m_workIntersect);
-					if (_bAnyIntersect)
-						break;
-				}
-			}
-		}
-
-		_intersection.isIntersecting = (shortest_length != -1);
-
-		return _intersection.isIntersecting;
-	}
-
-	/** Test an array of quads for intersection. Returns the closest
-	 * intersection point to the origin of the picking ray. Assumes that the
-	 * vertices are ordered as [Xn, Yn, Zn] and are translated into the same
-	 * coordinate system that the the origin and direction are from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the quads
-	 * @param _nQuadCount The number of quads to use from the array
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @return the details of any intersection found. The isIntersecting member will be false if no intersection was found. 
-	 */
-	public Intersection rayQuadArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int _nQuadCount, boolean _bAnyIntersect) {
-		Intersection intersection = new Intersection();
-		rayQuadArray(_origin, _direction, _fLength, _vertices, _nQuadCount, _bAnyIntersect, intersection);
-		return intersection;
-	}
-	
-	/** Test an array of triangles strips for intersection. Returns the closest
-	 * intersection point to the origin of the picking ray. Assumes that the
-	 * vertices are ordered as [Xn, Yn, Zn] and are translated into the same
-	 * coordinate system that the the origin and direction are from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _stripTriangleCount The number of polygons in each strip
-	 * @param _nStripCount The number of strips to use from the array
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @param _intersection Will hold the details of any intersection found. The isIntersecting member will be false if no intersection was found.
-	 * @return true if there was an intersection, false if not
-	 */
-	public boolean intersectTriangleStripArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int[] _stripTriangleCount, int _nStripCount, boolean _bAnyIntersect, Intersection _intersection) {
-		// Add all the strip lengths up first
-		int total_vertices = 0;
-
-		for (int i = _nStripCount; --i >= 0;)
-			total_vertices += _stripTriangleCount[i];
-
-		if (_vertices.length < total_vertices * 3)
-			throw new IllegalArgumentException("Not enough vertices for the given triangle strips");
-
-		double shortest_length = -1;
-		double this_length;
-		int offset = 0;
-
-		for (int i = 0; i < _nStripCount; i++) {
-			offset = i * _stripTriangleCount[i] * 3;
-
-			for (int j = 0; j < _stripTriangleCount[i] - 2; j++) {
-				System.arraycopy(_vertices, offset + j * 3, m_tmpPolygon, 0, 9);
-
-				if (intersectPolygonChecked(_origin, _direction, _fLength, m_tmpPolygon, 3, m_workIntersect)) {
-					m_diffVector.sub(_origin, m_workIntersect.point);
-
-					this_length = m_diffVector.lengthSquared();
-
-					if ((shortest_length == -1) || (this_length < shortest_length)) {
-						shortest_length = this_length;
-						_intersection.set(m_workIntersect);
-						if (_bAnyIntersect)
-							break;
 					}
 				}
 			}
 		}
 
-		_intersection.isIntersecting = (shortest_length != -1);
+		_intersection.setIntersecting((shortest_length != -1));
 
-		return _intersection.isIntersecting;
+		return _intersection.isIntersecting();
 	}
 
-	/** Test an array of triangles strips for intersection. Returns the closest
-	 * intersection point to the origin of the picking ray. Assumes that the
-	 * vertices are ordered as [Xn, Yn, Zn] and are translated into the same
-	 * coordinate system that the the origin and direction are from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _stripTriangleCount The number of polygons in each strip
-	 * @param _nStripCount The number of strips to use from the array
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @return the details of any intersection found. The isIntersecting member will be false if no intersection was found. 
-	 */
-	public Intersection intersectTriangleStripArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int[] _stripTriangleCount, int _nStripCount, boolean _bAnyIntersect) {
-		Intersection intersection = new Intersection();
-		intersectTriangleStripArray(_origin, _direction, _fLength, _vertices, _stripTriangleCount, _nStripCount, _bAnyIntersect, intersection);
-		return intersection;
-	}
-
-	/** Test an array of triangle fans for intersection. Returns the closest
-	 * intersection point to the origin of the picking ray. Assumes that the
-	 * vertices are ordered as [Xn, Yn, Zn] and are translated into the same
-	 * coordinate system that the the origin and direction are from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _fanTriangleCounts The number of polygons in each fan
-	 * @param _nFanCount The number of fans to use from the array
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @param _intersection Will hold the details of any intersection found. The isIntersecting member will be false if no intersection was found.
-	 * @return true if there was an intersection, false if not
-	 */
-	public boolean intersectTriangleFanArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int[] _fanTriangleCounts, int _nFanCount, boolean _bAnyIntersect, Intersection _intersection) {
-		// Add all the strip lengths up first
-		int total_vertices = 0;
-
-		for (int i = _nFanCount; --i >= 0;)
-			total_vertices += _fanTriangleCounts[i];
-
-		if (_vertices.length < total_vertices * 3)
-			throw new IllegalArgumentException("Not enough vertices for the given triangle fans");
-
-		double shortest_length = -1;
-		double this_length;
-		int offset = 0;
-
-		for (int i = 0; i < _nFanCount; i++) {
-			offset = i * _fanTriangleCounts[i] * 3;
-
-			// setup the constant first position
-			m_tmpPolygon[0] = _vertices[offset];
-			m_tmpPolygon[1] = _vertices[offset + 1];
-			m_tmpPolygon[2] = _vertices[offset + 2];
-
-			for (int j = 1; j < _fanTriangleCounts[i] - 2; j++) {
-				m_tmpPolygon[3] = _vertices[offset + j * 3];
-				m_tmpPolygon[4] = _vertices[offset + j * 3 + 1];
-				m_tmpPolygon[5] = _vertices[offset + j * 3 + 2];
-
-				m_tmpPolygon[6] = _vertices[offset + j * 3 + 3];
-				m_tmpPolygon[7] = _vertices[offset + j * 3 + 4];
-				m_tmpPolygon[8] = _vertices[offset + j * 3 + 5];
-
-				// Now the rest of the polygon
-				if (intersectPolygonChecked(_origin, _direction, _fLength, m_tmpPolygon, 3, m_workIntersect)) {
-					m_diffVector.sub(_origin, m_workIntersect.point);
-
-					this_length = m_diffVector.lengthSquared();
-
-					if ((shortest_length == -1) || (this_length < shortest_length)) {
-						shortest_length = this_length;
-						_intersection.set(m_workIntersect);
-						if (_bAnyIntersect)
-							break;
-					}
-				}
-			}
-		}
-
-		_intersection.isIntersecting = (shortest_length != -1);
-
-		return _intersection.isIntersecting;
-	}
-
-	/** Test an array of triangle fans for intersection. Returns the closest
-	 * intersection point to the origin of the picking ray. Assumes that the
-	 * vertices are ordered as [Xn, Yn, Zn] and are translated into the same
-	 * coordinate system that the the origin and direction are from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _fanTriangleCounts The number of polygons in each fan
-	 * @param _nFanCount The number of fans to use from the array
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @return the details of any intersection found. The isIntersecting member will be false if no intersection was found. 
-	 */
-	public Intersection intersectTriangleFanArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int[] _fanTriangleCounts, int _nFanCount, boolean _bAnyIntersect) {
-		Intersection intersection = new Intersection();
-		intersectTriangleStripArray(_origin, _direction, _fLength, _vertices, _fanTriangleCounts, _nFanCount, _bAnyIntersect, intersection);
-		return intersection;
-	}
-	
-	/** Test an array of indexed triangles for intersection. Returns the
-	 * closest intersection point to the origin of the picking ray. Assumes
-	 * that the vertices are ordered as [Xn, Yn, Zn] and are translated
-	 * into the same coordinate system that the the origin and direction are
-	 * from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _indices The list of indexes used to construct triangles
-	 * @param _nIndexCount The number of strips to use from the array
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @param _intersection Will hold the details of any intersection found. The isIntersecting member will be false if no intersection was found.
-	 * @return true if there was an intersection, false if not
-	 */
-	public boolean intersectIndexedTriangleArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int[] _indices, int _nIndexCount, boolean _bAnyIntersect, Intersection _intersection) {
-		double shortest_length = -1;
-		double this_length;
-		int i0, i1, i2;
-
-		for (int i = 0; i < _nIndexCount * 3;) {
-			i0 = _indices[i++];
-			i1 = _indices[i++];
-			i2 = _indices[i++];
-
-			m_tmpPolygon[0] = _vertices[i0++];
-			m_tmpPolygon[1] = _vertices[i0++];
-			m_tmpPolygon[2] = _vertices[i0];
-
-			m_tmpPolygon[3] = _vertices[i1++];
-			m_tmpPolygon[4] = _vertices[i1++];
-			m_tmpPolygon[5] = _vertices[i1];
-
-			m_tmpPolygon[6] = _vertices[i2++];
-			m_tmpPolygon[7] = _vertices[i2++];
-			m_tmpPolygon[8] = _vertices[i2];
-
-			if (intersectPolygonChecked(_origin, _direction, _fLength, m_tmpPolygon, 3, m_workIntersect)) {
-				m_diffVector.sub(_origin, m_workIntersect.point);
-
-				this_length = m_diffVector.lengthSquared();
-
-				if ((shortest_length == -1) || (this_length < shortest_length)) {
-					shortest_length = this_length;
-					_intersection.set(m_workIntersect);
-					if (_bAnyIntersect)
-						break;
-				}
-			}
-		}
-
-		return (shortest_length != -1);
-	}
-
-	/** Test an array of indexed triangles for intersection. Returns the
-	 * closest intersection point to the origin of the picking ray. Assumes
-	 * that the vertices are ordered as [Xn, Yn, Zn] and are translated
-	 * into the same coordinate system that the the origin and direction are
-	 * from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _indices The list of indexes used to construct triangles
-	 * @param _nIndexCount The number of strips to use from the array
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @return the details of any intersection found. The isIntersecting member will be false if no intersection was found. 
-	 */
-	public Intersection intersectIndexedTriangleArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int[] _indices, int _nIndexCount, boolean _bAnyIntersect) {
-		Intersection intersection = new Intersection();
-		intersectIndexedTriangleArray(_origin, _direction, _fLength, _vertices, _indices, _nIndexCount, _bAnyIntersect, intersection);
-		return intersection;
-	}
-	
-	/** Test an array of indexed quads for intersection. Returns the
-	 * closest intersection point to the origin of the picking ray. Assumes
-	 * that the vertices are ordered as [Xn, Yn, Zn] and are translated
-	 * into the same coordinate system that the the origin and direction are
-	 * from.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _indices The list of indexes used to construct quads
-	 * @param _nIndexCount The number of indices
-	 * @param _bAnyIntersect True if we just want to know if any intersection occurs
-	 * @param _intersection Will hold the details of any intersection found. The isIntersecting member will be false if no intersection was found.
-	 * @return true if there was an intersection, false if not
-	 */
-	public boolean intersectIndexedQuadArray(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int[] _indices, int _nIndexCount, boolean _bAnyIntersect, Intersection _intersection) {
-		double shortest_length = -1;
-		double this_length;
-		int i0, i1, i2, i3;
-
-		for (int i = 0; i < _nIndexCount * 3;) {
-			i0 = _indices[i++];
-			i1 = _indices[i++];
-			i2 = _indices[i++];
-			i3 = _indices[i++];
-
-			m_tmpPolygon[0] = _vertices[i0++];
-			m_tmpPolygon[1] = _vertices[i0++];
-			m_tmpPolygon[2] = _vertices[i0];
-
-			m_tmpPolygon[3] = _vertices[i1++];
-			m_tmpPolygon[4] = _vertices[i1++];
-			m_tmpPolygon[5] = _vertices[i1];
-
-			m_tmpPolygon[6] = _vertices[i2++];
-			m_tmpPolygon[7] = _vertices[i2++];
-			m_tmpPolygon[8] = _vertices[i2];
-
-			m_tmpPolygon[9] = _vertices[i3++];
-			m_tmpPolygon[10] = _vertices[i3++];
-			m_tmpPolygon[11] = _vertices[i3];
-
-			if (intersectPolygonChecked(_origin, _direction, _fLength, m_tmpPolygon, 4, m_workIntersect)) {
-				m_diffVector.sub(_origin, m_workIntersect.point);
-
-				this_length = m_diffVector.lengthSquared();
-
-				if ((shortest_length == -1) || (this_length < shortest_length)) {
-					shortest_length = this_length;
-					_intersection.set(m_workIntersect);
-					if (_bAnyIntersect)
-						break;
-				}
-			}
-		}
-
-		return (shortest_length != -1);
-	}
-
-	//----------------------------------------------------------
-	// Lower level methods for individual polygons
-	//----------------------------------------------------------
-
-	/** Test to see if the polygon intersects with the given ray. The
-	 * vertices are ordered as [Xn, Yn, Zn]. The algorithm assumes that
-	 * the points are co-planar. If they are not, the results may not be
-	 * accurate. The normal is calculated based on the first 3 points of the
-	 * polygon. We don't do any testing for less than 3 points.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _nVertexCount The number of vertices to use from the array
-	 * @param _intersection Will hold the details of any intersection found. The isIntersecting member will be false if no intersection was found.
-	 * @return true if there was an intersection, false if not
-	 */
-	public boolean intersectPolygon(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int _nVertexCount, Intersection _intersection) {
-		if (_vertices.length < _nVertexCount * 2)
-			throw new IllegalArgumentException("Not enough vertices in the buffer for the given vertex count");
-
-		if ((m_working2dVertices == null) || (m_working2dVertices.length < _nVertexCount * 2))
-			m_working2dVertices = new float[_nVertexCount * 2];
-
-		return intersectPolygonChecked(_origin, _direction, _fLength, _vertices, _nVertexCount, _intersection);
-	}
-
-	/** Test to see if the polygon intersects with the given ray. The
-	 * vertices are ordered as [Xn, Yn, Zn]. The algorithm assumes that
-	 * the points are co-planar. If they are not, the results may not be
-	 * accurate. The normal is calculated based on the first 3 points of the
-	 * polygon. We don't do any testing for less than 3 points.
-	 *
-	 * @param _origin The origin of the ray
-	 * @param _direction The direction of the ray
-	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _nVertexCount The number of vertices to use from the array
-	 * @return the details of any intersection found. The isIntersecting member will be false if no intersection was found. 
-	 */
-	public Intersection intersectPolygon(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int _nVertexCount) {
-		if (_vertices.length < _nVertexCount * 2)
-			throw new IllegalArgumentException("Not enough vertices in the buffer for the given vertex count");
-
-		if ((m_working2dVertices == null) || (m_working2dVertices.length < _nVertexCount * 2))
-			m_working2dVertices = new float[_nVertexCount * 2];
-
-		Intersection intersection = new Intersection();
-		intersectPolygonChecked(_origin, _direction, _fLength, _vertices, _nVertexCount, intersection);
-		return intersection;
-	}
-
-	/** Private version of the ray - Polygon intersection test that does not
+	/** Private version of the Ray - Polygon intersection test that does not
 	 * do any bounds checking on arrays and assumes everything is correct.
 	 * Allows fast calls to this method for internal use as well as more
 	 * expensive calls with checks for the public interfaces.
@@ -577,21 +107,27 @@ public class Intersections {
 	 * @param _origin The origin of the ray
 	 * @param _direction The direction of the ray
 	 * @param _fLength An optional length for to make the ray a segment. If the value is zero, it is ignored
-	 * @param _vertices The vertices of the triangles
-	 * @param _nVertexCount The number of vertices to use from the array
+	 * @param _polygon The polygon to check for intersection
 	 * @param _intersection Will hold the details of any intersection found. The isIntersecting member will be false if no intersection was found.
 	 * @return true if there was an intersection, false if not
 	 */
-	private boolean intersectPolygonChecked(Point3d _origin, Vector3d _direction, float _fLength, float[] _vertices, int _nVertexCount, Intersection _intersection) {
+	private boolean intersectPolygonChecked(Point3d _origin, Vector3d _direction, float _fLength, Polygon _polygon, Intersection _intersection) {
 		int i, j;
 
-		m_tmpVector0.x = _vertices[3] - _vertices[0];
-		m_tmpVector0.y = _vertices[4] - _vertices[1];
-		m_tmpVector0.z = _vertices[5] - _vertices[2];
+		// Make length squared because we do all comparisons using squared distances
+		float _fLengthSquared = _fLength * _fLength;
+		
+		_polygon.getVertex(0, m_polyVector0);
+		_polygon.getVertex(1, m_polyVector1);
+		_polygon.getVertex(2, m_polyVector2);
+		
+		m_tmpVector0.x = m_polyVector1.x - m_polyVector0.x;
+		m_tmpVector0.y = m_polyVector1.y - m_polyVector0.y;
+		m_tmpVector0.z = m_polyVector1.z - m_polyVector0.z;
 
-		m_tmpVector1.x = _vertices[6] - _vertices[3];
-		m_tmpVector1.y = _vertices[7] - _vertices[4];
-		m_tmpVector1.z = _vertices[8] - _vertices[5];
+		m_tmpVector1.x = m_polyVector2.x - m_polyVector1.x;
+		m_tmpVector1.y = m_polyVector2.y - m_polyVector1.y;
+		m_tmpVector1.z = m_polyVector2.z - m_polyVector1.z;
 
 		m_normal.cross(m_tmpVector0, m_tmpVector1);
 
@@ -605,9 +141,7 @@ public class Intersections {
 		if (n_dot_dir == 0)
 			return false;
 
-		m_workVector.x = _vertices[0];
-		m_workVector.y = _vertices[1];
-		m_workVector.z = _vertices[2];
+		m_workVector.set(m_polyVector0);
 		double d = m_normal.dot(m_workVector);
 
 		m_workVector.set(_origin);
@@ -624,15 +158,15 @@ public class Intersections {
 		// segment/ray. Using the winding rule to see if inside or outside
 		// First store the exact intersection point anyway, regardless of
 		// whether this is an intersection or not.
-		_intersection.point.x = _origin.x + _direction.x * t;
-		_intersection.point.y = _origin.y + _direction.y * t;
-		_intersection.point.z = _origin.z + _direction.z * t;
-		_intersection.normal.set(m_normal);
-		_intersection.normal.normalize();
-		_intersection.distance = _origin.distance(_intersection.point);
+		_intersection.getPoint().x = _origin.x + _direction.x * t;
+		_intersection.getPoint().y = _origin.y + _direction.y * t;
+		_intersection.getPoint().z = _origin.z + _direction.z * t;
+		_intersection.setDistanceSquared(_origin.distanceSquared(_intersection.getPoint()));
+		_intersection.getNormal().set(m_normal);
+		_intersection.getNormal().normalize();
 		
 		// Intersection point after the end of the segment?
-		if ((_fLength != 0) && (_intersection.distance > _fLength))
+		if ((_fLength != 0) && (_intersection.getDistanceSquared() > _fLengthSquared))
 			return false;
 
 		// bounds check
@@ -664,27 +198,30 @@ public class Intersections {
 		// vertices [Xn Yn Zn] onto dominant coordinate plane (Un Vn).
 		// 2. Translate (U, V) polygon so intersection point is origin from
 		// (Un', Vn').
-		j = 2 * _nVertexCount - 1;
+		j = 2 * _polygon.getVertexCount() - 1;
 
 		switch (dom_axis) {
 			case 0 :
-				for (i = _nVertexCount; --i >= 0;) {
-					m_working2dVertices[j--] = _vertices[i * 3 + 2] - (float)_intersection.point.z;
-					m_working2dVertices[j--] = _vertices[i * 3 + 1] - (float)_intersection.point.y;
+				for (i = _polygon.getVertexCount(); --i >= 0;) {
+					_polygon.getVertex(i, m_polyVector0);
+					m_working2dVertices[j--] = m_polyVector0.z - (float)_intersection.getPoint().z;
+					m_working2dVertices[j--] = m_polyVector0.y - (float)_intersection.getPoint().y;
 				}
 				break;
 
 			case 1 :
-				for (i = _nVertexCount; --i >= 0;) {
-					m_working2dVertices[j--] = _vertices[i * 3 + 2] - (float)_intersection.point.z;
-					m_working2dVertices[j--] = _vertices[i * 3] - (float)_intersection.point.x;
+				for (i = _polygon.getVertexCount(); --i >= 0;) {
+					_polygon.getVertex(i, m_polyVector0);
+					m_working2dVertices[j--] = m_polyVector0.z - (float)_intersection.getPoint().z;
+					m_working2dVertices[j--] = m_polyVector0.x - (float)_intersection.getPoint().x;
 				}
 				break;
 
 			case 2 :
-				for (i = _nVertexCount; --i >= 0;) {
-					m_working2dVertices[j--] = _vertices[i * 3 + 1] - (float)_intersection.point.y;
-					m_working2dVertices[j--] = _vertices[i * 3] - (float)_intersection.point.x;
+				for (i = _polygon.getVertexCount(); --i >= 0;) {
+					_polygon.getVertex(i, m_polyVector0);
+					m_working2dVertices[j--] = m_polyVector0.y - (float)_intersection.getPoint().y;
+					m_working2dVertices[j--] = m_polyVector0.x - (float)_intersection.getPoint().x;
 				}
 				break;
 		}
@@ -701,13 +238,13 @@ public class Intersections {
 		else
 			sh = 1;
 
-		for (i = 0; i < _nVertexCount; i++) {
+		for (i = 0; i < _polygon.getVertexCount(); i++) {
 			// Step 5.
 			// For each edge of polygon (Ua' V a') -> (Ub', Vb') where
 			// a = 0..Nv-1 and b = (a + 1) mod Nv
 
 			// b = (a + 1) mod Nv
-			j = (i + 1) % _nVertexCount;
+			j = (i + 1) % _polygon.getVertexCount();
 
 			int i_u = i * 2; // index of Ua'
 			int j_u = j * 2; // index of Ub'
@@ -754,8 +291,14 @@ public class Intersections {
 
 /*
  * $Log$
- * Revision 1.8  2004/03/02 06:46:02  puf
- * Now sets the distance field in the intersection object in intersectPolygonChecked..
+ * Revision 1.9  2004/03/07 17:34:10  tako
+ * Introduced Geometries which make it possible to perform intersection and
+ * collision detection without having to think about the underlying organization
+ * of the data. Geometries have been implemented for the most used
+ * vertex structures: quads, triangles, strips and fans. Each Geometry
+ * implements a Polygon iterator making it possible to iterate over each
+ * polygon (triangle or quad) in a Geometry again without knowing the
+ * underlying organization of the data.
  *
  * Revision 1.7  2003/12/05 15:24:25  tako
  * Removed all old-style intersection methods.
