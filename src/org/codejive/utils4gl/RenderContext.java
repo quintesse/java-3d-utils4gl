@@ -21,7 +21,7 @@
  */
 package org.codejive.utils4gl;
 
-import java.io.IOException;
+import org.codejive.utils4gl.textures.*;
 
 import net.java.games.jogl.GL;
 import net.java.games.jogl.GLU;
@@ -32,13 +32,13 @@ import net.java.games.jogl.util.GLUT;
  * to pass all of them around all of the time.
  * The object is also used to set and retrieve any managed textures.
  * @author Tako
- * @version $Revision: 164 $
+ * @version $Revision: 212 $
  */
 public class RenderContext {
 	private GL m_gl;
 	private GLU m_glu;
 
-	private int m_textures[];
+	private Texture m_textures[];
 		
 	private static final GLUT m_glut = new GLUT();
 	
@@ -51,8 +51,7 @@ public class RenderContext {
 		m_glu = _glu;
 
 		// Just an arbitrary number for now until I decide how to handle this
-		m_textures = new int[10];
-		m_gl.glGenTextures(10, m_textures);
+		m_textures = new Texture[10];
 	}
 	
 	/** Returns the reference to the GL object
@@ -76,34 +75,20 @@ public class RenderContext {
 		return m_glut;
 	}
 	
-	public void setTexture(int _nTextureIndex, String _sFileName) {
-		Texture texture = null;
-		try {
-			texture = TextureReader.readTexture(_sFileName);
-		} catch (IOException e) {
-			System.err.println("Could not read texture because " + e.getMessage());
-		}
-		m_gl.glBindTexture(GL.GL_TEXTURE_2D, m_textures[_nTextureIndex]);
-		if (texture != null) {
-			makeRGBTexture(texture, GL.GL_TEXTURE_2D, true);
-		}
+	public void addTexture(int _nTextureId, Texture _texture) {
+		m_textures[_nTextureId] = _texture;
 	}
 
-	public int getTextureHandle(int _nTextureId) {
+	public Texture getTexture(int _nTextureId) {
 		return m_textures[_nTextureId];
-	}
-    
-	private void makeRGBTexture(Texture img, int target, boolean mipmapped) {
-		if (mipmapped) {
-			m_glu.gluBuild2DMipmaps(target, GL.GL_RGB8, img.getWidth(), img.getHeight(), GL.GL_RGB, GL.GL_UNSIGNED_BYTE, img.getPixels());
-		} else {
-			m_gl.glTexImage2D(target, 0, GL.GL_RGB, img.getWidth(), img.getHeight(), 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, img.getPixels());
-		}
 	}
 }
 
 /*
  * $Log$
+ * Revision 1.6  2004/03/07 15:54:23  tako
+ * Observes a RenderContext.
+ *
  * Revision 1.5  2003/12/01 22:34:37  tako
  * All code is now subject to the Lesser GPL.
  *
