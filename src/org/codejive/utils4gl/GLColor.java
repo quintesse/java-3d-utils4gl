@@ -34,6 +34,10 @@ public class GLColor {
 		set(_color);
 	}
 
+	public GLColor(Color _color, float _fAlpha) {
+		set(_color, _fAlpha);
+	}
+
 	public void set(float _fRed, float _fGreen, float _fBlue, float _fAlpha) {
 		m_fRed = _fRed;
 		m_fGreen = _fGreen;
@@ -51,6 +55,10 @@ public class GLColor {
 
 	public void set(Color _color) {
 		set((float)_color.getRed() / 255, (float)_color.getGreen() / 255, (float)_color.getBlue() / 255, _color.getAlpha() / 255);
+	}
+	
+	public void set(Color _color, float _fAlpha) {
+		set((float)_color.getRed() / 255, (float)_color.getGreen() / 255, (float)_color.getBlue() / 255, _fAlpha);
 	}
 	
 	public float getRed() {
