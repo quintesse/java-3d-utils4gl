@@ -33,9 +33,6 @@ public class FrustumVisibilityTester {
 	private float[][] m_Frustum = new float[6][4];
 
 	
-	public FrustumVisibilityTester() {
-	}
-
 	///////////////////////////////// NORMALIZE PLANE \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 	/////
 	/////	This normalizes a plane (A side) from a given frustum.
