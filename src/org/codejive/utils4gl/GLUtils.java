@@ -7,9 +7,12 @@ import javax.vecmath.*;
 
 /**
  * @author tako
- * @version $Revision: 48 $
+ * @version $Revision: 166 $
  */
 public class GLUtils {
+	
+	public static final double DEG2RAD = 2.0d * Math.PI / 360.0d;
+	public static final double RAD2DEG = 360.0d / 2.0d * Math.PI;
 	
 	public static float[] getGLMatrix(Matrix3f _matrix) {
 		Vector3f vec = new Vector3f();
@@ -42,6 +45,9 @@ public class GLUtils {
 
 /*
  * $Log$
+ * Revision 1.3  2003/12/01 22:37:51  tako
+ * Added factors that convert degrees to radians and vise versa.
+ *
  * Revision 1.2  2003/11/17 10:49:59  tako
  * Added CVS macros for revision and log.
  *
