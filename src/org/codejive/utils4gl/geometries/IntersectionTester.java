@@ -7,7 +7,7 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
 /*
- * @version $Revision: 101 $
+ * @version $Revision: 181 $
  */
 public class Intersections {
 
@@ -27,6 +27,25 @@ public class Intersections {
 
 	/** Temporay space for a single quad polygon */
 	private float[] m_tmpPolygon;
+
+	/** This class contains all information about an intersection. 
+	 * It is returned by some of the functions in this class.
+	 */
+	public class Intersection {
+		/** Indicates if an intersection was found. 
+		 * The other members are only valid, if this field has a value of true.
+		 */
+		public boolean isIntersecting;
+		/** The point at which an intersection was found
+		 */
+		public Point3d point = new Point3d();
+		/** The normal at the which the vector intersects at the point found.
+		 */
+		public Vector3d normal = new Vector3d();
+		/** The distance from the point passed in to the intersection point.
+		 */
+		public double distance = 0.0;
+	}
 
 	/**
 	 * Create a default instance of this class with no internal data
@@ -75,6 +94,29 @@ public class Intersections {
 	 *    intersection and don't really care which it is
 	 */
 	public boolean intersectTriangleArray(Point3d origin, Vector3d direction, float length, float[] coords, int numTris, Point3d point, Vector3d normal, boolean intersectOnly) {
+		Intersection intersection = intersectTriangleArray(origin, direction, length, coords, numTris, intersectOnly);
+		point.set(intersection.point);
+		normal.set(intersection.normal);
+		return intersection.isIntersecting;
+	}
+
+	/** Test an array of triangles for intersection. Returns the closest
+	 * intersection point to the origin of the picking ray. Assumes that the
+	 * coordinates are ordered as [Xn, Yn, Zn] and are translated into the same
+	 * coordinate system that the the origin and direction are from.
+	 *
+	 * @return the details of any intersection found. The isIntersecting member will be false of no intersection was found. 
+	 * @param origin The origin of the ray
+	 * @param direction The direction of the ray
+	 * @param length An optional length for to make the ray a segment. If
+	 *   the value is zero, it is ignored
+	 * @param coords The coordinates of the triangles
+	 * @param numTris The number of triangles to use from the array
+	 * @param intersectOnly true if we only want to know if we have a
+	 *    intersection and don't really care which it is
+	 */
+	public Intersection intersectTriangleArray(Point3d origin, Vector3d direction, float length, float[] coords, int numTris, boolean intersectOnly) {
+		Intersection intersection = new Intersection();
 		if (coords.length < numTris * 9)
 			throw new IllegalArgumentException("coords too small for numCoords");
 
@@ -94,8 +136,9 @@ public class Intersections {
 
 				if (((length == 0) || (this_length <= length)) && ((shortest_length == -1) || (this_length < shortest_length))) {
 					shortest_length = this_length;
-					point.set(m_workPoint);
-					normal.set(m_workNormal);
+					intersection.point.set(m_workPoint);
+					intersection.normal.set(m_workNormal);
+					intersection.distance = this_length;
 
 					if (intersectOnly)
 						break;
@@ -103,7 +146,7 @@ public class Intersections {
 			}
 		}
 
-		return (shortest_length != -1);
+		return intersection;
 	}
 
 	/** Test an array of quads for intersection. Returns the closest
@@ -171,6 +214,31 @@ public class Intersections {
 	 *    intersection and don't really care which it is
 	 */
 	public boolean intersectTriangleStripArray(Point3d origin, Vector3d direction, float length, float[] coords, int[] stripCounts, int numStrips, Point3d point, Vector3d normal, boolean intersectOnly) {
+		Intersection intersection = intersectTriangleStripArray(origin, direction, length, coords, stripCounts, numStrips, intersectOnly); 
+		point.set(intersection.point);
+		normal.set(intersection.normal);
+		return (intersection.isIntersecting);
+	}
+	
+	/** Test an array of triangles strips for intersection. Returns the closest
+	 * intersection point to the origin of the picking ray. Assumes that the
+	 * coordinates are ordered as [Xn, Yn, Zn] and are translated into the same
+	 * coordinate system that the the origin and direction are from.
+	 *
+	 * @return the details of any intersection found. The isIntersecting member will be false of no intersection was found. 
+	 * @param origin The origin of the ray
+	 * @param direction The direction of the ray
+	 * @param length An optional length for to make the ray a segment. If
+	 *   the value is zero, it is ignored
+	 * @param coords The coordinates of the triangles
+	 * @param stripCounts The number of polygons in each strip
+	 * @param numStrips The number of strips to use from the array
+	 * @param intersectOnly true if we only want to know if we have a
+	 *    intersection and don't really care which it is
+	 */
+	public Intersection intersectTriangleStripArray(Point3d origin, Vector3d direction, float length, float[] coords, int[] stripCounts, int numStrips, boolean intersectOnly) {
+		Intersection intersection = new Intersection();
+		
 		// Add all the strip lengths up first
 		int total_coords = 0;
 
@@ -189,6 +257,7 @@ public class Intersections {
 
 			for (int j = 0; j < stripCounts[i] - 2; j++) {
 				System.arraycopy(coords, offset + j * 3, m_tmpPolygon, 0, 9);
+				//System.out.println("Copied strip "+i+" from coords["+(offset + j * 3)+",+9]");
 
 				if (intersectPolygonChecked(origin, direction, length, m_tmpPolygon, 3, m_workPoint, m_workNormal)) {
 					m_diffVector.sub(origin, m_workPoint);
@@ -197,9 +266,9 @@ public class Intersections {
 
 					if ((shortest_length == -1) || (this_length < shortest_length)) {
 						shortest_length = this_length;
-						point.set(m_workPoint);
-						normal.set(m_workNormal);
-
+						intersection.point.set(m_workPoint);
+						intersection.normal.set(m_workNormal);
+						intersection.distance = this_length;
 						if (intersectOnly)
 							break;
 					}
@@ -207,7 +276,9 @@ public class Intersections {
 			}
 		}
 
-		return (shortest_length != -1);
+		intersection.isIntersecting = (shortest_length != -1);
+
+		return intersection;
 	}
 
 	/** Test an array of triangle fans for intersection. Returns the closest
@@ -623,6 +694,11 @@ public class Intersections {
 
 /*
  * $Log$
+ * Revision 1.5  2003/12/02 10:16:07  tako
+ * Applied puf's patch that adds several methods that return Intersection
+ * instances instead of relying on setting the values of several initialized
+ * objects that the caller has to pass.
+ *
  * Revision 1.4  2003/11/20 16:23:27  tako
  * Updated Java docs.
  *
