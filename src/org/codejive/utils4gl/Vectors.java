@@ -37,7 +37,7 @@ public class Vectors {
 		return scaledv;	
 	}
 	
-	public static void lookAt(Matrix4d mat, Point3d eye, Point3d target, Vector3d upVector) {
+	public static void lookAt(Matrix4d mat, Point3d eye, Point3d target) {
 		// Determine lookVector
 		double lookVectorX = eye.x - target.x;
 		double lookVectorY = eye.y - target.y;
