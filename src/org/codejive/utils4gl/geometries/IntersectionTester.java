@@ -78,6 +78,9 @@ public class Intersections {
 		double shortest_length = -1;
 		double this_length;
 
+		// Make length squared because we do all comparisons using squared distances
+		length *= length;
+		
 		for (int i = 0; i < numTris; i++) {
 			System.arraycopy(coords, i * 9, m_tmpPolygon, 0, 9);
 
@@ -86,7 +89,7 @@ public class Intersections {
 
 				this_length = m_diffVector.lengthSquared();
 
-				if ((shortest_length == -1) || (this_length < shortest_length)) {
+				if (((length == 0) || (this_length <= length)) && ((shortest_length == -1) || (this_length < shortest_length))) {
 					shortest_length = this_length;
 					point.set(m_workPoint);
 					normal.set(m_workNormal);
@@ -296,7 +299,6 @@ public class Intersections {
 	public boolean intersectIndexedTriangleArray(Point3d origin, Vector3d direction, float length, float[] coords, int[] indexes, int numIndex, Point3d point, Vector3d normal, boolean intersectOnly) {
 		double shortest_length = -1;
 		double this_length;
-		int offset = 0;
 		int i0, i1, i2;
 
 		for (int i = 0; i < numIndex * 3;) {
@@ -357,7 +359,6 @@ public class Intersections {
 	public boolean intersectIndexedQuadArray(Point3d origin, Vector3d direction, float length, float[] coords, int[] indexes, int numIndex, Point3d point, Vector3d normal, boolean intersectOnly) {
 		double shortest_length = -1;
 		double this_length;
-		int offset = 0;
 		int i0, i1, i2, i3;
 
 		for (int i = 0; i < numIndex * 3;) {
