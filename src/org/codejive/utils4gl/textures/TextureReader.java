@@ -1,6 +1,10 @@
-package org.codejive.utils4gl;
+package org.codejive.utils4gl.textures;
 
 import javax.imageio.ImageIO;
+
+import org.codejive.utils4gl.BitmapLoader;
+import org.codejive.utils4gl.RenderContext;
+import org.codejive.utils4gl.ResourceRetriever;
 
 import java.awt.Color;
 import java.awt.image.BufferedImage;
@@ -13,55 +17,102 @@ import java.nio.ByteBuffer;
  * Image loading class that converts BufferedImages into a data
  * structure that can be easily passed to OpenGL.
  * @author Pepijn Van Eeckhoudt
- * @version $Revision: 206 $
+ * @version $Revision: 214 $
  */
 public class TextureReader {
 	/** Returns a Texture object initialized with the image data
 	 * (but without the alpha channel) as stored in the given file.
-	 * @param filename File name of the requested image
+	 * @param _context Render context
+	 * @param _filename File name of the requested image
 	 * @throws IOException If the requested image can't be located or read
 	 * @return A Texture object witout alpha information
 	 */	
-    public static Texture readTexture(String filename) throws IOException {
-        return readTexture(filename, false);
+    public static Texture readTexture(RenderContext _context, String _filename) throws IOException {
+        return readTexture(_context, _filename, false);
     }
 
-	 /** Returns a Texture object initialized with the image data
-	  * and optionally the alpha channel as stored in the given file.
-	  * @param filename File name of the requested image
-	  * @param storeAlphaChannel A boolean indicating if alpha channel information should
-	  * be read and stored in the Texture object as well
-	  * @throws IOException If the requested image can't be located or read
-	  * @return A Texture object witout alpha information
-	  */	 
-    public static Texture readTexture(String filename, boolean storeAlphaChannel) throws IOException {
-        return readTexture(filename, storeAlphaChannel, null);
+    /** Returns a TextureBuffer object initialized with the image data
+     * (but without the alpha channel) as stored in the given file.
+     * @param _context Render context
+     * @param _filename File name of the requested image
+     * @throws IOException If the requested image can't be located or read
+     * @return A TextureBuffer object witout alpha information
+     */	
+    public static TextureBuffer readTextureBuffer(RenderContext _context, String _filename) throws IOException {
+    	return readTextureBuffer(_context, _filename, false);
+    }
+    
+	/** Returns a Texture object initialized with the image data
+	 * and optionally the alpha channel as stored in the given file.
+	 * @param _context Render context
+	 * @param _filename File name of the requested image
+	 * @param storeAlphaChannel A boolean indicating if alpha channel information should
+	 * be read and stored in the Texture object as well
+	 * @throws IOException If the requested image can't be located or read
+	 * @return A Texture object witout alpha information
+	 */	 
+    public static Texture readTexture(RenderContext _context, String _filename, boolean storeAlphaChannel) throws IOException {
+        return readTexture(_context, _filename, storeAlphaChannel, null);
+    }
+
+    /** Returns a TextureBuffer object initialized with the image data
+     * and optionally the alpha channel as stored in the given file.
+     * @param _context Render context
+     * @param _filename File name of the requested image
+     * @param storeAlphaChannel A boolean indicating if alpha channel information should
+     * be read and stored in the TextureBuffer object as well
+     * @throws IOException If the requested image can't be located or read
+     * @return A TextureBuffer object witout alpha information
+     */	 
+    public static TextureBuffer readTextureBuffer(RenderContext _context, String _filename, boolean storeAlphaChannel) throws IOException {
+    	return readTextureBuffer(_context, _filename, storeAlphaChannel, null);
     }
 
 	/** Returns a Texture object initialized with the image data
 	 * and optionally a mask color that will be used to fill the
 	 * texture's alpha channel: pixels having the specified color
 	 * will be fully transparant.
-	 * @param filename File name of the requested image
-	 * @param Color the color used to determine transparancy
+	 * @param _context Render context
+	 * @param _filename File name of the requested image
+	 * @param _maskColor The color used to determine transparancy
 	 * @throws IOException If the requested image can't be located or read
 	 * @return A Texture object witout alpha information
 	 */	 
-    public static Texture readTexture(String filename, Color _maskColor) throws IOException {
-    	return readTexture(filename, true, _maskColor);
+    public static Texture readTexture(RenderContext _context, String _filename, Color _maskColor) throws IOException {
+    	return readTexture(_context, _filename, true, _maskColor);
     }
     
-	private static Texture readTexture(String filename, boolean storeAlphaChannel, Color _maskColor) throws IOException {
-		BufferedImage bufferedImage;
-		if (filename.endsWith(".bmp")) {
-			bufferedImage = BitmapLoader.loadBitmap(filename);
-		} else {
-			bufferedImage = readImage(filename);
-		}
-		return readPixels(bufferedImage, storeAlphaChannel, _maskColor);
+    /** Returns a TextureBuffer object initialized with the image data
+     * and optionally a mask color that will be used to fill the
+     * texture's alpha channel: pixels having the specified color
+     * will be fully transparant.
+     * @param _context Render context
+     * @param _filename File name of the requested image
+     * @param _maskColor The color used to determine transparancy
+     * @throws IOException If the requested image can't be located or read
+     * @return A TextureBuffer object witout alpha information
+     */	 
+    public static TextureBuffer readTextureBuffer(RenderContext _context, String _filename, Color _maskColor) throws IOException {
+    	return readTextureBuffer(_context, _filename, true, _maskColor);
+    }
+    
+    private static Texture readTexture(RenderContext _context, String _filename, boolean _storeAlphaChannel, Color _maskColor) throws IOException {
+		TextureBuffer buf = readTextureBuffer(_context, _filename, _storeAlphaChannel, _maskColor);
+		return new SimpleTexture(buf);
 	}
 
-	private static BufferedImage readImage(String resourceName) throws IOException {
+    private static TextureBuffer readTextureBuffer(RenderContext _context, String _filename, boolean _storeAlphaChannel, Color _maskColor) throws IOException {
+    	BufferedImage bufferedImage;
+    	if (_filename.endsWith(".bmp")) {
+    		bufferedImage = BitmapLoader.loadBitmap(_filename);
+    	} else {
+    		bufferedImage = readImage(_filename);
+    	}
+    	TextureBuffer buf = readTextureBuffer(_context, bufferedImage, _storeAlphaChannel, _maskColor);
+    	return buf;
+    }
+
+    private static BufferedImage readImage(String resourceName) throws IOException {
         URL url = ResourceRetriever.getResource(resourceName);
         if (url == null) {
             throw new RuntimeException("Error reading resource " + resourceName);
@@ -69,7 +120,7 @@ public class TextureReader {
         return ImageIO.read(url);
     }
 
-	private static Texture readPixels(BufferedImage img, boolean storeAlphaChannel, Color _maskColor) {
+	private static TextureBuffer readTextureBuffer(RenderContext _context, BufferedImage img, boolean storeAlphaChannel, Color _maskColor) {
 		int[] packedPixels = new int[img.getWidth() * img.getHeight()];
 
 		PixelGrabber pixelgrabber = new PixelGrabber(img, 0, 0, img.getWidth(), img.getHeight(), packedPixels, 0, img.getWidth());
@@ -106,12 +157,18 @@ public class TextureReader {
 				}
 			}
 		}
-		return new Texture(unpackedPixels, img.getWidth(), img.getHeight());
+		TextureBuffer buffer = new TextureBuffer(_context, unpackedPixels, img.getWidth(), img.getHeight());
+		return buffer;
 	}
 }
 
 /*
  * $Log$
+ * Revision 1.5  2004/03/07 16:26:38  tako
+ * Texture has been turned into an interface and textures itself are split into
+ * TextureBuffers that hold the binary data while Textures determine which
+ * part of the buffer to use. All existing code has been adjusted accordingly.
+ *
  * Revision 1.4  2003/12/15 13:59:02  tako
  * Now supports color maskinig to indicatie which parts of the texture are
  * (100%) transparant. Original patch by Gertjan Assies.
