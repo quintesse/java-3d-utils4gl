@@ -23,7 +23,7 @@ package org.codejive.utils4gl;
 
 /** Interface for objects that can render themselves using OpenGL.
  * @author tako
- * @version $Revision: 213 $
+ * @version $Revision: 264 $
  */
 public interface Renderable {
 	/** Indicates that the object has been initialized (its initRendering()
@@ -36,12 +36,6 @@ public interface Renderable {
 	 * @param _context A reference to a valid RenderContext object.
 	 */	
 	public void initRendering(RenderContext _context);
-	/** Will be called when something in the context change that might
-	 * necesitate the object to redo (part of) its initialization
-	 * (a possible example is when the render window gets resized).
-	 * @param _context A reference to a valid RenderContext object.
-	 */	
-	public void updateRendering(RenderContext _context);
 	/** Used to make the object render itself in 3D.
 	 * @param _context A reference to a valid RenderContext object
 	 * @param _observer An optional object observing the rendering process.
@@ -52,6 +46,9 @@ public interface Renderable {
 
 /*
  * $Log$
+ * Revision 1.9  2004/10/17 11:03:48  tako
+ * Removed updateRendering().
+ *
  * Revision 1.8  2004/03/07 16:05:55  tako
  * Fixed faulty CVS checkin comments and added javadoc.
  *
