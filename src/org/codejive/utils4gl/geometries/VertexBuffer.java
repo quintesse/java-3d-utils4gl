@@ -22,6 +22,7 @@
 package org.codejive.utils4gl.geometries;
 
 import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.FloatBuffer;
 import java.nio.IntBuffer;
 
@@ -35,7 +36,7 @@ import javax.vecmath.Tuple3f;
  * for either interleaved or non-interleaved data.
  *  
  * @author Tako
- * @version $Revision: 215 $
+ * @version $Revision: 227 $
  */
 public class VertexBuffer {
 	/**
@@ -308,7 +309,9 @@ public class VertexBuffer {
 		FloatBuffer buf;
 
 		if ((m_nBufferFormat & MASK_BUFFER) == BUFFER_NIO) {
-			buf = ByteBuffer.allocateDirect(_nSize * SIZEOF_FLOAT).asFloatBuffer();
+			ByteBuffer bb = ByteBuffer.allocateDirect(_nSize * SIZEOF_FLOAT);
+			bb.order(ByteOrder.nativeOrder());
+			buf = bb.asFloatBuffer();
 		} else {
 			buf = FloatBuffer.allocate(_nSize);
 		}
@@ -320,7 +323,9 @@ public class VertexBuffer {
 		IntBuffer buf;
 
 		if ((m_nBufferFormat & MASK_BUFFER) == BUFFER_NIO) {
-			buf = ByteBuffer.allocateDirect(_nSize * SIZEOF_INT).asIntBuffer();
+			ByteBuffer bb = ByteBuffer.allocateDirect(_nSize * SIZEOF_INT);
+			bb.order(ByteOrder.nativeOrder());
+			buf = bb.asIntBuffer();
 		} else {
 			buf = IntBuffer.allocate(_nSize);
 		}
@@ -1266,6 +1271,9 @@ public class VertexBuffer {
 
 /*
  * $Log$
+ * Revision 1.5  2004/03/17 00:35:40  tako
+ * Fixed bug allocating direct buffers with wrong byte ordering.
+ *
  * Revision 1.4  2004/03/07 17:27:29  tako
  * Moved VertexBuffer from utils4gl to utils4gl/geometries.
  * The old VertexBuffer has been changed and extended to not only hold
