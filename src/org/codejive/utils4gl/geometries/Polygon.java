@@ -21,42 +21,30 @@
  */
 package org.codejive.utils4gl.geometries;
 
-import java.util.Iterator;
-
-
 /**
+ * A Polygon is just an extremely thin wrapper around a VertexBuffer used to hold
+ * the vertex information of just a single polygon (3 or 4 vertices).
+ * 
  * @author tako
- * @version $Revision: 216 $
+ * @version $Revision: 217 $
  */
 public class Polygon extends VertexBuffer {
 
 	/**
-	 * @param _nMaxVertexCount
-	 * @param _nBufferFormat
+	 * Creates a new Polygon buffer with the given amount of vertices.
+	 * @param _nMaxVertexCount The maximum number of vertices in the polygon (either 3 or 4)
+	 * @param _nBufferFormat The format of the buffer indicating which information will be stored
 	 */
 	public Polygon(int _nMaxVertexCount, int _nBufferFormat) {
 		super(_nMaxVertexCount, (_nBufferFormat & (MASK_COORDINATES | MASK_TEXTURES | MASK_COLORS | MASK_NORMALS)) | BUFFER_BYREF);
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.codejive.utils4gl.buffers.VertexBuffer#polygonIterator()
-	 */
-	public Iterator polygonIterator() {
-		// Polygons don't do iterators
-		return null;
-	}
-	
-	/* (non-Javadoc)
-	 * @see org.codejive.utils4gl.buffers.VertexBuffer#polygonIterator(int)
-	 */
-	public Iterator polygonIterator(int _nFormat) {
-		// Polygons don't do iterators
-		return null;
 	}
 }
 
 /*
  * $Log$
+ * Revision 1.2  2004/03/07 18:01:31  tako
+ * Completed all required javadoc comments.
+ *
  * Revision 1.1  2004/03/07 17:34:10  tako
  * Introduced Geometries which make it possible to perform intersection and
  * collision detection without having to think about the underlying organization

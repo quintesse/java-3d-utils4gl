@@ -31,11 +31,17 @@ import java.util.Iterator;
  * IMPORTANT: The polygon iterator methods are NOT thread-safe!
  * 
  * @author tako
- * @version $Revision: 216 $
+ * @version $Revision: 217 $
  */
 public class TriangleArrayGeometry extends GeometryBase {
 	PolygonIterator m_polyIter;
 	
+	/**
+	 * Creates a TriangleArrayGeometry using the given VertexBuffer for its vertex data.
+	 * The vertex data is assumed to consist of 3 vertices for each trianlge. See the
+	 * documentation for Geometry for more information about the structure of the data.
+	 * @param _buffer The VertexBuffer containing the raw geometric information
+	 */
 	public TriangleArrayGeometry(VertexBuffer _buffer) {
 		super(_buffer);
 		m_polyIter = this.new PolygonIterator(getBuffer().getFormat());
@@ -55,6 +61,12 @@ public class TriangleArrayGeometry extends GeometryBase {
 		private Polygon m_polygon;
 		private int m_nIndex;
 		
+		/**
+		 * Creates a PolygonIterator that knows how to iterate over
+		 * each of the polygons in the VertexBuffer.
+		 * @param _nFormat Indicates which of the information in the underlying
+		 * VertexBuffer we want mirrored in the PolygonIterator.
+		 */
 		public PolygonIterator(int _nFormat) {
 			m_polygon = new Polygon(3, _nFormat);
 			m_nIndex = 0;
@@ -101,6 +113,9 @@ public class TriangleArrayGeometry extends GeometryBase {
 			// We don't support removing
 		}
 		
+		/**
+		 * Resets the iterator to the start of its sequence
+		 */
 		public void reset() {
 			m_nIndex = 0;
 		}
@@ -109,6 +124,9 @@ public class TriangleArrayGeometry extends GeometryBase {
 
 /*
  * $Log$
+ * Revision 1.2  2004/03/07 18:01:31  tako
+ * Completed all required javadoc comments.
+ *
  * Revision 1.1  2004/03/07 17:34:10  tako
  * Introduced Geometries which make it possible to perform intersection and
  * collision detection without having to think about the underlying organization

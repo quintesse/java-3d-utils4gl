@@ -32,12 +32,18 @@ import javax.vecmath.Vector3d;
  * IMPORTANT: The intersection methods are NOT thread-safe!
  * 
  * @author Tako
- * @version $Revision: 216 $
+ * @version $Revision: 217 $
  */
 public abstract class GeometryBase implements Geometry {
 	private VertexBuffer m_buffer;
 	private IntersectionTester intersections;
 	
+	/**
+	 * Creates a Geometry using the given VertexBuffer for its vertex data.
+	 * The data is assumed to be arranged exactly according to the expectations
+	 * of the implementing Geometry.
+	 * @param _buffer The VertexBuffer containing the raw geometric information
+	 */
 	public GeometryBase(VertexBuffer _buffer) {
 		m_buffer = _buffer;
 		intersections = new IntersectionTester();
@@ -112,6 +118,9 @@ public abstract class GeometryBase implements Geometry {
 
 /*
  * $Log$
+ * Revision 1.2  2004/03/07 18:01:31  tako
+ * Completed all required javadoc comments.
+ *
  * Revision 1.1  2004/03/07 17:34:10  tako
  * Introduced Geometries which make it possible to perform intersection and
  * collision detection without having to think about the underlying organization

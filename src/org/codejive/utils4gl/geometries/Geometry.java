@@ -19,10 +19,14 @@ import javax.vecmath.Vector3d;
  * of the polygons they contain.
  * 
  * @author Tako
- * @version $Revision: 216 $
+ * @version $Revision: 217 $
  */
 public interface Geometry {
 
+	/**
+	 * Returns the VertexBuffer associated with this Geometry
+	 * @return The Geometry's VertexBuffer
+	 */
 	public VertexBuffer getBuffer();
 		
 	/**
@@ -138,6 +142,9 @@ public interface Geometry {
 
 /*
  * $Log$
+ * Revision 1.2  2004/03/07 18:01:31  tako
+ * Completed all required javadoc comments.
+ *
  * Revision 1.1  2004/03/07 17:34:10  tako
  * Introduced Geometries which make it possible to perform intersection and
  * collision detection without having to think about the underlying organization
