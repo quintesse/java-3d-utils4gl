@@ -1,4 +1,22 @@
 /*
+ * [utils4gl] OpenGL utilities library
+ * 
+ * Copyright (C) 2003 Tako Schotanus
+ * 
+ * This library is free software; you can redistribute it and/or modify it
+ * under the terms of the GNU Lesser General Public License as published by the
+ * Free Software Foundation; either version 2.1 of the License, or (at your
+ * option) any later version.
+ * 
+ * This library is distributed in the hope that it will be useful, but WITHOUT
+ * ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ * FITNESS FOR A PARTICULAR PURPOSE. See the GNU Lesser General Public License
+ * for more details.
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * along with this library; if not, write to the Free Software Foundation,
+ * Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+ * 
  * Created on Aug 31, 2003
  */
 package org.codejive.utils4gl;
@@ -6,7 +24,7 @@ package org.codejive.utils4gl;
 /** Interface for objects that implement some kind of frame count and
  * average frame rate determination.
  * @author tako
- * @version $Revision: 101 $
+ * @version $Revision: 164 $
  */
 public interface FrameRateCounter {
 	/** This method should be called each time a frame has been rendered.
@@ -27,6 +45,9 @@ public interface FrameRateCounter {
 
 /*
  * $Log$
+ * Revision 1.5  2003/12/01 22:35:03  tako
+ * All code is now subject to the Lesser GPL.
+ *
  * Revision 1.4  2003/11/20 16:23:27  tako
  * Updated Java docs.
  *
