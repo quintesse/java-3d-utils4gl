@@ -7,7 +7,7 @@ import javax.vecmath.Point3d;
 import javax.vecmath.Vector3d;
 
 /*
- * @version $Revision: 181 $
+ * @version $Revision: 182 $
  */
 public class Intersections {
 
@@ -145,6 +145,8 @@ public class Intersections {
 				}
 			}
 		}
+
+		intersection.isIntersecting = (shortest_length != -1);
 
 		return intersection;
 	}
@@ -694,6 +696,9 @@ public class Intersections {
 
 /*
  * $Log$
+ * Revision 1.6  2003/12/02 18:51:44  tako
+ * Fixed bug in intersectTriangleArray() where intersection would not be flagged.
+ *
  * Revision 1.5  2003/12/02 10:16:07  tako
  * Applied puf's patch that adds several methods that return Intersection
  * instances instead of relying on setting the values of several initialized
