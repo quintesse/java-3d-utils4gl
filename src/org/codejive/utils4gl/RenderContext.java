@@ -32,7 +32,7 @@ import net.java.games.jogl.util.GLUT;
  * to pass all of them around all of the time.
  * The object is also used to set and retrieve any managed textures.
  * @author Tako
- * @version $Revision: 212 $
+ * @version $Revision: 213 $
  */
 public class RenderContext {
 	private GL m_gl;
@@ -75,10 +75,20 @@ public class RenderContext {
 		return m_glut;
 	}
 	
+	/**
+	 * Adds a texture to the context's texture manager.
+	 * @param _nTextureId The Id chosen for the texture
+	 * @param _texture The texture to register with the texture manager
+	 */
 	public void addTexture(int _nTextureId, Texture _texture) {
 		m_textures[_nTextureId] = _texture;
 	}
 
+	/**
+	 * Retrieves a texture from the texture manager
+	 * @param _nTextureId The Id of the texture to retrieve
+	 * @return The requested texture
+	 */
 	public Texture getTexture(int _nTextureId) {
 		return m_textures[_nTextureId];
 	}
@@ -86,8 +96,12 @@ public class RenderContext {
 
 /*
  * $Log$
+ * Revision 1.7  2004/03/07 16:05:55  tako
+ * Fixed faulty CVS checkin comments and added javadoc.
+ *
  * Revision 1.6  2004/03/07 15:54:23  tako
- * Observes a RenderContext.
+ * Changed existing texture handling methods to just do very simple
+ * texture bookkeeping.
  *
  * Revision 1.5  2003/12/01 22:34:37  tako
  * All code is now subject to the Lesser GPL.

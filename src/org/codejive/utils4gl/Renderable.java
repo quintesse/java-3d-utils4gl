@@ -23,7 +23,7 @@ package org.codejive.utils4gl;
 
 /** Interface for objects that can render themselves using OpenGL.
  * @author tako
- * @version $Revision: 212 $
+ * @version $Revision: 213 $
  */
 public interface Renderable {
 	/** Indicates that the object has been initialized (its initRendering()
@@ -52,8 +52,11 @@ public interface Renderable {
 
 /*
  * $Log$
+ * Revision 1.8  2004/03/07 16:05:55  tako
+ * Fixed faulty CVS checkin comments and added javadoc.
+ *
  * Revision 1.7  2004/03/07 15:54:23  tako
- * Observes a RenderContext.
+ * Rendering can now be observed by a RenderObserver.
  *
  * Revision 1.6  2003/12/01 22:34:37  tako
  * All code is now subject to the Lesser GPL.
