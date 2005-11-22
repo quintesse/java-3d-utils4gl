@@ -26,33 +26,32 @@ import java.util.Stack;
 
 import org.codejive.utils4gl.textures.*;
 
-import net.java.games.jogl.GL;
-import net.java.games.jogl.GLU;
-import net.java.games.jogl.util.GLUT;
+import javax.media.opengl.GL;
+import javax.media.opengl.glu.GLU;
+import com.sun.opengl.utils.GLUT;
 
 /** This object is used to pass references to the OpenGL GL, GLU and
  * GLUT objects to those objects that need them. This saves having
  * to pass all of them around all of the time.
  * The object is also used to set and retrieve any managed textures.
  * @author Tako
- * @version $Revision: 235 $
+ * @version $Revision: 298 $
  */
 public class RenderContext {
 	private GL m_gl;
-	private GLU m_glu;
 
 	private Texture m_textures[];
 	private Stack m_clippingRegions;
 		
+	private static final GLU m_glu = new GLU();
 	private static final GLUT m_glut = new GLUT();
 	
 	/** Constructs a RenderContext using the given GL and GLU objects.
 	 * @param _gl A reference to a valid GL object
 	 * @param _glu A reference to a valid GLU object
 	 */	
-	public RenderContext(GL _gl, GLU _glu) {
+	public RenderContext(GL _gl) {
 		m_gl = _gl;
-		m_glu = _glu;
 
 		// Just an arbitrary number for now until I decide how to handle this
 		m_textures = new Texture[10];
