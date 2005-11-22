@@ -25,12 +25,12 @@ import java.nio.ByteBuffer;
 
 import org.codejive.utils4gl.RenderContext;
 
-import net.java.games.jogl.GL;
+import javax.media.opengl.GL;
 
 /** Buffer object that holds the image to use for a single texture or for multiple textures.
  * 
  * @author tako
- * @version $Revision: 228 $
+ * @version $Revision: 299 $
  */
 public class TextureBuffer {
 	private RenderContext m_context;
@@ -59,7 +59,7 @@ public class TextureBuffer {
 		m_bHasAlphaChannel = _bHasAlphaChannel;
 		
 		int textures[] = new int[1];
-		_context.getGl().glGenTextures(1, textures);
+		_context.getGl().glGenTextures(1, textures, 0);
 		m_nHandle = textures[0];
 		m_bMipMapped = true; // We turn mip-mapping on by default
 		m_bUnbound = true;
@@ -70,6 +70,7 @@ public class TextureBuffer {
 	 * texture's image data.
 	 */	
 	public ByteBuffer getPixels() {
+		m_pixels.rewind();
 		return m_pixels;
 	}
 
