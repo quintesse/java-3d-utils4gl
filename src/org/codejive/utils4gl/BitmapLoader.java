@@ -10,7 +10,7 @@ import java.io.InputStream;
  *
  * @author Abdul Bezrati
  * @author Pepijn Van Eeckhoudt
- * @version $Revision: 101 $
+ * @version $Revision: 296 $
  */
 public class BitmapLoader {
 	/** Reads a bitmap image from a file on the disk or in a resource.
@@ -39,15 +39,15 @@ public class BitmapLoader {
 			int nBitCount = bytesToShort(bitmapInfoHeader, 14);
 			int nSizeImage = bytesToInt(bitmapInfoHeader, 20);
 //			int nCompression = bytesToInt(bitmapInfoHeader, 16);
-			int nColoursUsed = bytesToInt(bitmapInfoHeader, 32);
+			int nColorsUsed = bytesToInt(bitmapInfoHeader, 32);
 //			int nXPixelsMeter = bytesToInt(bitmapInfoHeader, 24);
 //			int nYPixelsMeter = bytesToInt(bitmapInfoHeader, 28);
-//			int nImportantColours = bytesToInt(bitmapInfoHeader, 36);
+//			int nImportantColors = bytesToInt(bitmapInfoHeader, 36);
 
 			if (nBitCount == 24) {
 				image = read24BitBitmap(nSizeImage, nHeight, nWidth, input);
 			} else if (nBitCount == 8) {
-				image = read8BitBitmap(nColoursUsed, nBitCount, nSizeImage, nWidth, nHeight, input);
+				image = read8BitBitmap(nColorsUsed, nBitCount, nSizeImage, nWidth, nHeight, input);
 			} else {
 				System.out.println("Not a 24-bit or 8-bit Windows Bitmap, aborting...");
 				image = null;
@@ -63,14 +63,14 @@ public class BitmapLoader {
 	}
 
 	private static BufferedImage read8BitBitmap(
-		int nColoursUsed,
+		int nColorsUsed,
 		int nBitCount,
 		int nSizeImage,
 		int nWidth,
 		int nHeight,
 		InputStream input)
 		throws IOException {
-		int nNumColors = (nColoursUsed > 0) ? nColoursUsed : (1 & 0xff) << nBitCount;
+		int nNumColors = (nColorsUsed > 0) ? nColorsUsed : (1 & 0xff) << nBitCount;
 
 		if (nSizeImage == 0) {
 			nSizeImage = ((((nWidth * nBitCount) + 31) & ~31) >> 3);
