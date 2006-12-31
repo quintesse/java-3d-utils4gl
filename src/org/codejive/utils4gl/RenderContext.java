@@ -28,14 +28,14 @@ import org.codejive.utils4gl.textures.*;
 
 import javax.media.opengl.GL;
 import javax.media.opengl.glu.GLU;
-import com.sun.opengl.utils.GLUT;
+import com.sun.opengl.util.GLUT;
 
 /** This object is used to pass references to the OpenGL GL, GLU and
  * GLUT objects to those objects that need them. This saves having
  * to pass all of them around all of the time.
  * The object is also used to set and retrieve any managed textures.
  * @author Tako
- * @version $Revision: 298 $
+ * @version $Revision: 347 $
  */
 public class RenderContext {
 	private GL m_gl;
