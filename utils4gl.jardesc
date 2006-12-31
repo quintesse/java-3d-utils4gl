@@ -1,14 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jardesc>
-    <jar path="C:/TEMP/webstarttest/utils4gl.jar"/>
-    <options overwrite="false" compress="true" exportErrors="true" exportWarnings="true" saveDescription="true" descriptionLocation="/utils4gl/utils4gl.jardesc" useSourceFolders="false" buildIfNeeded="true"/>
-    <manifest manifestVersion="1.0" usesManifest="true" reuseManifest="false" saveManifest="true" generateManifest="true" manifestLocation="/utils4gl/utils4gl.manifest">
-        <sealing sealJar="false">
-            <packagesToSeal/>
-            <packagesToUnSeal/>
-        </sealing>
-    </manifest>
-    <selectedElements exportClassFiles="true" exportOutputFolder="false" exportJavaFiles="false">
-        <javaElement handleIdentifier="=utils4gl/src"/>
-    </selectedElements>
+<jar path="/home/tako/tmp/gui4gl/utils4gl.jar"/>
+<options buildIfNeeded="true" compress="true" descriptionLocation="/utils4gl/utils4gl.jardesc" exportErrors="true" exportWarnings="true" includeDirectoryEntries="false" overwrite="false" saveDescription="true" storeRefactorings="false" useSourceFolders="false"/>
+<storedRefactorings deprecationInfo="true" structuralOnly="false"/>
+<selectedProjects/>
+<manifest generateManifest="true" manifestLocation="/utils4gl/utils4gl.manifest" manifestVersion="1.0" reuseManifest="false" saveManifest="true" usesManifest="true">
+<sealing sealJar="false">
+<packagesToSeal/>
+<packagesToUnSeal/>
+</sealing>
+</manifest>
+<selectedElements exportClassFiles="true" exportJavaFiles="false" exportOutputFolder="false">
+<javaElement handleIdentifier="=utils4gl/src"/>
+</selectedElements>
 </jardesc>
