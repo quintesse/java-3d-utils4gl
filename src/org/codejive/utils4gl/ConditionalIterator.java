@@ -29,16 +29,16 @@ import java.util.Iterator;
  * the filtered iterator. Only the method includeElement(Object)
  * needs to be implemented to make this possible.
  * @author tako
- * @version $Revision: 164 $
+ * @version $Revision: 357 $
  */
-public abstract class ConditionalIterator implements Iterator {
-	private Iterator m_iter;
-	private Object m_currItem;
+public abstract class ConditionalIterator<E> implements Iterator<E> {
+	private Iterator<E> m_iter;
+	private E m_currItem;
 	
 	/** Constructor that takes the iterator that is going to be filtered
 	 * @param _iter The iterator to be filtered
 	 */	
-	public ConditionalIterator(Iterator _iter) {
+	public ConditionalIterator(Iterator<E> _iter) {
 		m_iter = _iter;
 		m_currItem = null;
 	}
@@ -61,9 +61,9 @@ public abstract class ConditionalIterator implements Iterator {
 	/* (non-Javadoc)
 	 * @see java.util.Iterator#next()
 	 */
-	public Object next() {
+	public E next() {
 		findNext();
-		Object element = m_currItem;
+		E element = m_currItem;
 		m_currItem = null;
 		return element;
 	}
@@ -71,7 +71,7 @@ public abstract class ConditionalIterator implements Iterator {
 	private void findNext() {
 		boolean bFound = (m_currItem != null);
 		while (!bFound && m_iter.hasNext()) {
-			Object element = m_iter.next();
+			E element = m_iter.next();
 			if (includeElement(element)) {
 				m_currItem = element;
 			}
@@ -84,7 +84,7 @@ public abstract class ConditionalIterator implements Iterator {
 	 * @return Boolean indicating if the given object should be
 	 * included or not
 	 */	
-	protected abstract boolean includeElement(Object _element);
+	protected abstract boolean includeElement(E _element);
 }
 
 /*

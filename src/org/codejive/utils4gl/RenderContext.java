@@ -35,13 +35,13 @@ import com.sun.opengl.util.GLUT;
  * to pass all of them around all of the time.
  * The object is also used to set and retrieve any managed textures.
  * @author Tako
- * @version $Revision: 347 $
+ * @version $Revision: 357 $
  */
 public class RenderContext {
 	private GL m_gl;
 
 	private Texture m_textures[];
-	private Stack m_clippingRegions;
+	private Stack<Rectangle> m_clippingRegions;
 		
 	private static final GLU m_glu = new GLU();
 	private static final GLUT m_glut = new GLUT();
@@ -56,7 +56,7 @@ public class RenderContext {
 		// Just an arbitrary number for now until I decide how to handle this
 		m_textures = new Texture[10];
 		
-		m_clippingRegions = new Stack();
+		m_clippingRegions = new Stack<Rectangle>();
 	}
 	
 	/** Returns the reference to the GL object
@@ -120,10 +120,10 @@ public class RenderContext {
 	public Rectangle popClippingRegion() {
 		Rectangle rect = null;
 		if (!m_clippingRegions.isEmpty()) {
-			rect = (Rectangle)m_clippingRegions.pop();
+			rect = m_clippingRegions.pop();
 			Rectangle newRect = null;
 			if (!m_clippingRegions.isEmpty()) {
-				newRect = (Rectangle)m_clippingRegions.peek();
+				newRect = m_clippingRegions.peek();
 			}
 			setClippingRegion(newRect);
 		}
@@ -138,7 +138,7 @@ public class RenderContext {
 	public Rectangle getClippingRegion() {
 		Rectangle rect = null;
 		if (!m_clippingRegions.isEmpty()) {
-			rect = (Rectangle) m_clippingRegions.peek();
+			rect = m_clippingRegions.peek();
 		}
 		return rect;
 	}
