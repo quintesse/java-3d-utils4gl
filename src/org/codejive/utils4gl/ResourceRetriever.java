@@ -9,7 +9,7 @@ import java.net.URL;
  * Utility class that allows transparent reading of files from
  * the current working directory or from the classpath.
  * @author Pepijn Van Eeckhoudt
- * @version $Revision: 101 $
+ * @version $Revision: 358 $
  */
 public class ResourceRetriever {
 	/** Finds a requested resource by name either on the disk or in a
@@ -24,10 +24,9 @@ public class ResourceRetriever {
         URL url = ClassLoader.getSystemResource(filename);
         // If not found in jar, then load from disk
         if (url == null) {
-            return new URL("file", "localhost", filename);
-        } else {
-            return url;
+            url = new URL("file", "localhost", filename);
         }
+        return url;
     }
 
 	/** Finds a requested resource by name either on the disk or in a
@@ -41,10 +40,9 @@ public class ResourceRetriever {
         InputStream stream = ClassLoader.getSystemResourceAsStream(filename);
         // If not found in jar, then load from disk
         if (stream == null) {
-            return new FileInputStream(filename);
-        } else {
-            return stream;
+            stream = new FileInputStream(filename);
         }
+        return stream;
     }
 }
 
