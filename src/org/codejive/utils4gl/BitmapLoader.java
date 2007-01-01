@@ -5,14 +5,19 @@ import java.awt.image.DataBufferByte;
 import java.awt.image.DataBufferInt;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /** Windows bitmap file loader.
  *
  * @author Abdul Bezrati
  * @author Pepijn Van Eeckhoudt
- * @version $Revision: 296 $
+ * @version $Revision: 359 $
  */
 public class BitmapLoader {
+
+	private static Logger logger = Logger.getLogger(BitmapLoader.class.getName());
+	
 	/** Reads a bitmap image from a file on the disk or in a resource.
 	 * @param file The file name of the bitmap to load
 	 * @return A BufferedImage containing the loaded image
@@ -49,15 +54,14 @@ public class BitmapLoader {
 			} else if (nBitCount == 8) {
 				image = read8BitBitmap(nColorsUsed, nBitCount, nSizeImage, nWidth, nHeight, input);
 			} else {
-				System.out.println("Not a 24-bit or 8-bit Windows Bitmap, aborting...");
+				logger.severe("Not a 24-bit or 8-bit Windows Bitmap, aborting...");
 				image = null;
 			}
 
 			input.close();
 			return image;
 		} catch (Exception e) {
-			e.printStackTrace();
-			System.out.println("Caught exception in loadBitmap!");
+			logger.log(Level.SEVERE, "Caught exception in loadBitmap!", e);
 		}
 		return null;
 	}
