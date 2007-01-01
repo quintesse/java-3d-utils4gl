@@ -31,7 +31,7 @@ import java.util.Iterator;
  * IMPORTANT: The polygon iterator methods are NOT thread-safe!
  * 
  * @author tako
- * @version $Revision: 217 $
+ * @version $Revision: 356 $
  */
 public class TriangleFanGeometry extends GeometryBase {
 	PolygonIterator m_polyIter;
@@ -47,17 +47,17 @@ public class TriangleFanGeometry extends GeometryBase {
 		m_polyIter = this.new PolygonIterator(getBuffer().getFormat());
 	}
 	
-	public Iterator polygonIterator() {
+	public Iterator<Polygon> polygonIterator() {
 		m_polyIter.reset();
 		return m_polyIter;
 	}
 	
-	public Iterator polygonIterator(int _nFormat) {
+	public Iterator<Polygon> polygonIterator(int _nFormat) {
 		m_polyIter.reset();
 		return m_polyIter;
 	}
 	
-	private class PolygonIterator implements Iterator {
+	private class PolygonIterator implements Iterator<Polygon> {
 		private Polygon m_polygon;
 		private int m_nIndex;
 		
@@ -76,7 +76,7 @@ public class TriangleFanGeometry extends GeometryBase {
 			return ((getBuffer().getSize() - m_nIndex + 1) >= 3);
 		}
 
-		public Object next() {
+		public Polygon next() {
 			m_polygon.reset();
 			
 			int nFormat = getBuffer().getFormat();
@@ -130,6 +130,7 @@ public class TriangleFanGeometry extends GeometryBase {
 
 		public void remove() {
 			// We don't support removing
+			throw new UnsupportedOperationException();
 		}
 		
 		/**

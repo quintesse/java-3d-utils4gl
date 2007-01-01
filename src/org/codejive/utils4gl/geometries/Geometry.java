@@ -19,7 +19,7 @@ import javax.vecmath.Vector3d;
  * of the polygons they contain.
  * 
  * @author Tako
- * @version $Revision: 217 $
+ * @version $Revision: 356 $
  */
 public interface Geometry {
 
@@ -37,7 +37,7 @@ public interface Geometry {
 	 * 
 	 * @return An Iterator object
 	 */
-	public Iterator polygonIterator();
+	public Iterator<Polygon> polygonIterator();
 	
 	/**
 	 * Returns an iterator that iterates over the polygons in the buffer.
@@ -48,7 +48,7 @@ public interface Geometry {
 	 * @param _nFormat The format determines which information the polygon iterator will gather
 	 * @return An Iterator object
 	 */
-	public Iterator polygonIterator(int _nFormat);
+	public Iterator<Polygon> polygonIterator(int _nFormat);
 	
 	/** Test the geometry for intersection by "shooting" a ray of infinite length
 	 * from the given origin towards the given direction. The first intersection

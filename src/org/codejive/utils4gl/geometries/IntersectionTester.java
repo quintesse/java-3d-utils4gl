@@ -16,7 +16,7 @@ import javax.vecmath.Vector3f;
  * but it has to be taken into account that the code is _not_ thread-safe!
  * 
  * @author Tako
- * @version $Revision: 216 $
+ * @version $Revision: 356 $
  */
 public class IntersectionTester {
 	
@@ -78,9 +78,9 @@ public class IntersectionTester {
 	public boolean intersect(Point3d _origin, Vector3d _direction, float _fLength, Geometry _geometry, boolean _bAnyIntersect, Intersection _intersection) {
 		double shortest_length = -1;
 
-		Iterator i = _geometry.polygonIterator(VertexBuffer.COORDINATES);
+		Iterator<Polygon> i = _geometry.polygonIterator(VertexBuffer.COORDINATES);
 		while (i.hasNext()) {
-			Polygon p = (Polygon)i.next();
+			Polygon p = i.next();
 			if (intersectPolygonChecked(_origin, _direction, _fLength, p, m_workIntersect)) {
 				if ((shortest_length == -1) || (m_workIntersect.getDistance() < shortest_length)) {
 					shortest_length = m_workIntersect.getDistance();
