@@ -26,7 +26,7 @@ import java.awt.Color;
 /** A simple color class that contains some useful methods to make
  * it easy to use them with OpenGL.
  * @author Tako
- * @version $Revision: 164 $
+ * @version $Revision: 360 $
  */
 public class GLColor {
 	private float m_fRed, m_fGreen, m_fBlue;
@@ -230,6 +230,7 @@ public class GLColor {
 		return colorComponents;
 	}
 	
+	@Override
 	public String toString() {
 		return "(R:" + m_fRed + ",G:" + m_fGreen + ",B:" + m_fBlue + ",alpha:" + m_fAlpha + ")";
 	}
