@@ -26,9 +26,12 @@ import java.util.Stack;
 
 import org.codejive.utils4gl.textures.*;
 
-import javax.media.opengl.GL;
-import javax.media.opengl.glu.GLU;
-import com.sun.opengl.util.GLUT;
+import com.jogamp.opengl.GL2;
+import com.jogamp.opengl.GL3;
+import com.jogamp.opengl.glu.GLU;
+import com.jogamp.opengl.glu.gl2.GLUgl2;
+import com.jogamp.opengl.util.gl2.GLUT;
+
 
 /** This object is used to pass references to the OpenGL GL, GLU and
  * GLUT objects to those objects that need them. This saves having
@@ -38,19 +41,19 @@ import com.sun.opengl.util.GLUT;
  * @version $Revision: 357 $
  */
 public class RenderContext {
-	private GL m_gl;
+	private GL2 m_gl;
 
 	private Texture m_textures[];
 	private Stack<Rectangle> m_clippingRegions;
 		
-	private static final GLU m_glu = new GLU();
+	private static final GLU m_glu = new GLUgl2();
 	private static final GLUT m_glut = new GLUT();
 	
 	/** Constructs a RenderContext using the given GL and GLU objects.
 	 * @param _gl A reference to a valid GL object
 	 * @param _glu A reference to a valid GLU object
 	 */	
-	public RenderContext(GL _gl) {
+	public RenderContext(GL2 _gl) {
 		m_gl = _gl;
 
 		// Just an arbitrary number for now until I decide how to handle this
@@ -62,7 +65,7 @@ public class RenderContext {
 	/** Returns the reference to the GL object
 	 * @return A reference to the internal GL object
 	 */	
-	public GL getGl() {
+	public GL2 getGl() {
 		return m_gl;
 	}
 	
@@ -146,9 +149,9 @@ public class RenderContext {
 	private void setClippingRegion(Rectangle _clipRect) {
 		if (_clipRect != null) {
 			m_gl.glScissor(_clipRect.x, _clipRect.y, _clipRect.width, _clipRect.height);
-			m_gl.glEnable(GL.GL_SCISSOR_TEST);
+			m_gl.glEnable(GL3.GL_SCISSOR_TEST);
 		} else {
-			m_gl.glDisable(GL.GL_SCISSOR_TEST);
+			m_gl.glDisable(GL3.GL_SCISSOR_TEST);
 		}
 	}
 }

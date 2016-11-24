@@ -6,7 +6,7 @@
 
 package org.codejive.utils4gl;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 /**
  * Port from digiben tutorial on www.gametutorials.com
@@ -64,7 +64,7 @@ public class FrustumVisibilityTester {
 	/////
 	///////////////////////////////// CALCULATE FRUSTUM \\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\\*
 
-	public void calculateFrustum(GL _gl) {    
+	public void calculateFrustum(GL2 _gl) {    
 		float[] proj = new float[16];								// This will hold our projection matrix
 		float[] modl = new float[16];								// This will hold our modelview matrix
 		float[] clip = new float[16];								// This will hold the clipping planes
@@ -72,11 +72,11 @@ public class FrustumVisibilityTester {
 		// glGetFloatv() is used to extract information about our OpenGL world.
 		// Below, we pass in GL_PROJECTION_MATRIX to abstract our projection matrix.
 		// It then stores the matrix into an array of [16].
-		_gl.glGetFloatv( GL.GL_PROJECTION_MATRIX, proj, 0 );
+		_gl.glGetFloatv( GL2.GL_PROJECTION_MATRIX, proj, 0 );
 
 		// By passing in GL_MODELVIEW_MATRIX, we can abstract our model view matrix.
 		// This also stores it in an array of [16].
-		_gl.glGetFloatv( GL.GL_MODELVIEW_MATRIX, modl, 0 );
+		_gl.glGetFloatv( GL2.GL_MODELVIEW_MATRIX, modl, 0 );
 
 		// Now that we have our modelview and projection matrix, if we combine these 2 matrices,
 		// it will give us our clipping planes.  To combine 2 matrices, we multiply them.

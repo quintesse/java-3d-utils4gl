@@ -25,7 +25,7 @@ import java.nio.ByteBuffer;
 
 import org.codejive.utils4gl.RenderContext;
 
-import javax.media.opengl.GL;
+import com.jogamp.opengl.GL2;
 
 /** Buffer object that holds the image to use for a single texture or for multiple textures.
  * 
@@ -120,7 +120,7 @@ public class TextureBuffer {
 	 * Binds the texture making it ready for use
 	 */
 	public void bind() {
-		m_context.getGl().glBindTexture(GL.GL_TEXTURE_2D, getHandle());
+		m_context.getGl().glBindTexture(GL2.GL_TEXTURE_2D, getHandle());
 		if (m_bUnbound) {
 			makeTexture();
 			m_bUnbound = false;
@@ -140,17 +140,17 @@ public class TextureBuffer {
 	
 	private void makePlainTexture() {
 		if (hasAlphaChannel()) {
-			m_context.getGl().glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGBA, getWidth(), getHeight(), 0, GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getPixels());
+			m_context.getGl().glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGBA, getWidth(), getHeight(), 0, GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, getPixels());
 		} else {
-			m_context.getGl().glTexImage2D(GL.GL_TEXTURE_2D, 0, GL.GL_RGB, getWidth(), getHeight(), 0, GL.GL_RGB, GL.GL_UNSIGNED_BYTE, getPixels());
+			m_context.getGl().glTexImage2D(GL2.GL_TEXTURE_2D, 0, GL2.GL_RGB, getWidth(), getHeight(), 0, GL2.GL_RGB, GL2.GL_UNSIGNED_BYTE, getPixels());
 		}
 	}
 	
 	private void makeMipmappedTexture() {
 		if (hasAlphaChannel()) {
-			m_context.getGlu().gluBuild2DMipmaps(GL.GL_TEXTURE_2D, GL.GL_RGBA8, getWidth(), getHeight(), GL.GL_RGBA, GL.GL_UNSIGNED_BYTE, getPixels());
+			m_context.getGlu().gluBuild2DMipmaps(GL2.GL_TEXTURE_2D, GL2.GL_RGBA8, getWidth(), getHeight(), GL2.GL_RGBA, GL2.GL_UNSIGNED_BYTE, getPixels());
 		} else {
-			m_context.getGlu().gluBuild2DMipmaps(GL.GL_TEXTURE_2D, GL.GL_RGB8, getWidth(), getHeight(), GL.GL_RGB, GL.GL_UNSIGNED_BYTE, getPixels());
+			m_context.getGlu().gluBuild2DMipmaps(GL2.GL_TEXTURE_2D, GL2.GL_RGB8, getWidth(), getHeight(), GL2.GL_RGB, GL2.GL_UNSIGNED_BYTE, getPixels());
 		}
 	}
 }
